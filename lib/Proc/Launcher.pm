@@ -3,10 +3,11 @@ use strict;
 use warnings;
 use Mouse;
 
-our $VERSION = '0.0.5';
+our $VERSION = '0.0.6';
 
 #_* Libraries
 
+use File::Path;
 use POSIX qw(setsid :sys_wait_h);
 use Scalar::Util qw(looks_like_number);
 
@@ -150,7 +151,9 @@ has 'pid_dir'      => ( is => 'ro',
                         isa => 'Str',
                         lazy => 1,
                         default => sub {
-                            return join "/", $ENV{HOME}, "logs";
+                            my $dir = join "/", $ENV{HOME}, "logs";
+                            unless ( -d $dir ) {  mkpath( $dir ); }
+                            return $dir;
                         },
                     );
 

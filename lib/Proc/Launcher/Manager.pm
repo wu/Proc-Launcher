@@ -4,6 +4,7 @@ use warnings;
 use Mouse;
 
 use Carp;
+use File::Path;
 use Proc::Launcher;
 
 =head1 NAME
@@ -79,13 +80,15 @@ handle dependencies.
 
 has 'debug'     => ( is => 'ro', isa => 'Bool', default => 0 );
 
-has 'pid_dir'   => ( is => 'ro',
-                     isa => 'Str',
-                     lazy => 1,
-                     default => sub {
-                         return join "/", $ENV{HOME}, ".proc", "logs";
-                     },
-                 );
+has 'pid_dir'      => ( is => 'ro',
+                        isa => 'Str',
+                        lazy => 1,
+                        default => sub {
+                            my $dir = join "/", $ENV{HOME}, "logs";
+                            unless ( -d $dir ) {  mkpath( $dir ); }
+                            return $dir;
+                        },
+                    );
 
 has 'launchers' => ( is => 'rw',
                      isa => 'HashRef[Proc::Launcher]',

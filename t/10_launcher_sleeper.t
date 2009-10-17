@@ -13,9 +13,9 @@ unlink $file;
 my $start_method = sub { sleep 600 };
 
 my $launcher = Proc::Launcher->new( start_method => $start_method,
-                                        daemon_name  => 'test',
-                                        pid_file     => $file,
-                                    );
+                                    daemon_name  => 'test',
+                                    pid_file     => $file,
+                                );
 
 ok( ! $launcher->is_running(),
     "Checking that test process is not already running"

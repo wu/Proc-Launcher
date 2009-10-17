@@ -1,5 +1,9 @@
 Revision history for Proc-Launcher
 
+0.0.6 Sat Oct 17, 2009  6:22 pm
+
+  - create pid_dir if it does not already exist
+
 0.0.2 Sat Oct 17, 2009  2:53 pm
 
   - add 'use strict' and 'use warnings'

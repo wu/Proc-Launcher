@@ -52,17 +52,18 @@ Proc::Launcher::Manager - spawn and manage multiple Proc::Launcher objects
 
 This library makes it easier to deal with multiple Proc::Launcher
 processes by providing methods to start and stop all daemons with a
-single command.
+single command.  Please see the documentation in Proc::Launcher to
+understand how this these libraries differ from other similar forking
+and controller modules.
 
 It also provides a supervisor() method which will spawn a child daemon
 that will monitor the other daemons at regular intervals and restart
-any that have stopped.  Note that only one supervisor can be running at
-any given time for each pid_dir.  This limitation will be removed in
-the future.
+any that have stopped.  Note that only one supervisor can be running
+at any given time for each pid_dir.
 
-A tail() method is under development that will spawn a
-POE::Wheel::FollowTail process for each daemon's stdout/stderr log
-file and allow you to provide a callback to process the output.
+A tail() method also exists that will spawn a POE::Wheel::FollowTail
+for each daemon's stdout/stderr log files and allow you to provide a
+callback to process the output.
 
 There is no tracking of inter-service dependencies nor predictable
 ordering of service startup.  Instead, daemons should be designed to

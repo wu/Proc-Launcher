@@ -9,7 +9,7 @@ use Pod::Usage;
 use YAML;
 
 use lib "$FindBin::Bin/../lib";
-use Panoptes::Launcher::Manager;
+use Proc::Launcher::Manager;
 
 #
 #_* Command-line options processing
@@ -23,6 +23,7 @@ unless ( GetOptions ( '-start'      => \$options{start},
                       '-force'      => \$options{force},
                       '-supervisor' => \$options{supervisor},
                       '-tail'       => \$options{tail},
+                      '-config'     => \$options{configfile},
                       '-v|verbose!' => \$options{verbose},
                       '-help|?'		=> \$options{help},
     )
@@ -36,7 +37,7 @@ if ( $options{help} ) {
 #_* Config
 #
 
-my $directory = join( "/", $ENV{HOME}, ".overctl" );
+my $directory = join( "/", $ENV{HOME}, ".panctl" );
 print "DIRECTORY: $directory\n";
 
 # Make sure it worked:
@@ -45,7 +46,10 @@ unless ( -d $directory ) {
 }
 
 # Config
-my $configfile = join( '/', $directory, 'config.yaml' );
+my $configfile = $options{configfile} || join( '/', $directory, 'panctl.conf' );
+unless ( -r $configfile ) {
+    die "ERROR: config file not found: $configfile\n";
+}
 
 # Load
 my $config = YAML::LoadFile( $configfile );
@@ -53,9 +57,9 @@ my $config = YAML::LoadFile( $configfile );
 #
 #_* Main
 #
-my $monitor = Panoptes::Launcher::Manager->new( app_name  => 'overctl',
-                                                pid_dir   => $directory,
-                                            );
+my $monitor = Proc::Launcher::Manager->new( app_name  => 'panctl',
+                                            pid_dir   => $directory,
+                                        );
 
 print "\n";
 for my $name ( keys %{ $config } ) {

@@ -95,10 +95,11 @@ any managed processes could fork it's own children.  Note that only
 the process id of the immediate child will be managed--any child
 processes spawned by child process (grandchildren) are not tracked.
 
-Similarly your child process should never do a fork() and exit().
-When the child does this, the associated launcher cannot detect the
-grandchild's pid, and will incorrectly assume that the child process
-has died--and may even attempt to restart it.
+Similarly your child process should never do a fork() and exit() or
+otherwise daemonize on it's own.  When the child does this, the
+launcher will lose track of the grandchild pid and assume it has shut
+down.  This may result in restarting your service while it is already
+running.
 
 This library does not handle command line options--that is left to
 your application/script.  It does not export any methods nor require
@@ -129,6 +130,9 @@ also for managing connections to the remote agents.
 
 If you are aware of any other noteworthy modules in this vein, please
 let me know!
+
+UPDATE: Another module that just showed up on CPAN today is
+Supervisor::Session.  This looks worthy of further investigation.
 
 =cut
 

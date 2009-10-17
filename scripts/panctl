@@ -1,0 +1,110 @@
+#!/usr/local/bin/perl -w
+use strict;
+use warnings;
+
+use File::Path;
+use FindBin;
+use Getopt::Long;
+use Pod::Usage;
+use YAML;
+
+use lib "$FindBin::Bin/../lib";
+use Panoptes::Launcher::Manager;
+
+#
+#_* Command-line options processing
+#
+
+my %options;
+
+unless ( GetOptions ( '-start'      => \$options{start},
+                      '-stop'       => \$options{stop},
+                      '-restart'    => \$options{restart},
+                      '-force'      => \$options{force},
+                      '-supervisor' => \$options{supervisor},
+                      '-tail'       => \$options{tail},
+                      '-v|verbose!' => \$options{verbose},
+                      '-help|?'		=> \$options{help},
+    )
+) { pod2usage( -exitval => 1, -verbose => 1 ) }
+
+if ( $options{help} ) {
+    pod2usage( -exitval => 0, -verbose => 2 );
+}
+
+#
+#_* Config
+#
+
+my $directory = join( "/", $ENV{HOME}, ".overctl" );
+print "DIRECTORY: $directory\n";
+
+# Make sure it worked:
+unless ( -d $directory ) {
+    mkpath( $directory );
+}
+
+# Config
+my $configfile = join( '/', $directory, 'config.yaml' );
+
+# Load
+my $config = YAML::LoadFile( $configfile );
+
+#
+#_* Main
+#
+my $monitor = Panoptes::Launcher::Manager->new( app_name  => 'overctl',
+                                                pid_dir   => $directory,
+                                            );
+
+print "\n";
+for my $name ( keys %{ $config } ) {
+    print "Loaded: $name: $config->{$name}->{description}\n";
+
+    my $cmd = $config->{$name}->{command};
+
+    #print "COMMAND $name: $cmd\n";
+
+    $monitor->spawn( daemon_name  => $name,
+                     start_method => sub { exec( $cmd ) },
+                     debug        => $options{verbose},
+                 );
+
+}
+print "\n";
+
+if ( $options{start} ) {
+    $monitor->start_all();
+}
+elsif ( $options{restart} && $options{force} ) {
+    $monitor->stop_all();
+    sleep 3;
+    $monitor->force_stop_all();
+    sleep 1;
+    $monitor->start_all();
+}
+elsif ( $options{restart} ) {
+    $monitor->stop_all();
+    sleep 1;
+    $monitor->start_all();
+}
+elsif ( $options{stop} && $options{force} ) {
+    $monitor->force_stop_all();
+}
+elsif ( $options{stop} ) {
+    $monitor->stop_all();
+}
+
+if ( $options{supervisor} ) {
+    print "Starting the supervisor process...\n";
+    $monitor->supervisor();
+}
+
+if ( $options{tail} ) {
+    print "Monitoring and displaying output from selected daemons\n";
+    $monitor->tail();
+}
+
+
+__END__
+

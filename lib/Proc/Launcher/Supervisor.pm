@@ -1,4 +1,6 @@
 package Proc::Launcher::Supervisor;
+use strict;
+use warnings;
 use Mouse;
 
 our $VERSION = '0.0.1';

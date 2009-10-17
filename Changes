@@ -1,5 +1,11 @@
 Revision history for Proc-Launcher
 
+0.0.2 Sat Oct 17, 2009  2:53 pm
+
+  - add 'use strict' and 'use warnings'
+    - redundant with Mouse, but needed by cpants for kwalitee score :P
+
 0.0.1  Fri Oct 16 22:05:11 2009
-       Initial release.
+
+  - Initial release.
 

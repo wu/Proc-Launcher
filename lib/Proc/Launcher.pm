@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use Mouse;
 
-our $VERSION = '0.0.1';
+our $VERSION = '0.0.5';
 
 #_* Libraries
 

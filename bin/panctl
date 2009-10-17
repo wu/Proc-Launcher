@@ -2,8 +2,6 @@
 use strict;
 use warnings;
 
-our $VERSION = '0.0.1';
-
 use File::Path;
 use FindBin;
 use Getopt::Long;

@@ -3,8 +3,6 @@ use strict;
 use warnings;
 use Mouse;
 
-our $VERSION = '0.0.1';
-
 use Term::ANSIColor;
 
 use POE qw(Wheel::FollowTail);

@@ -67,7 +67,7 @@ die), see Proc::Launcher::Manager.
 =head1 RELATED WORK
 
 There are a large number of modules already on CPAN for forking and
-maintain child processes, and also for managing daemon processes
+managing child processes, and also for managing daemon processes
 (apachectl style).  After doing a lot of reading and experimentation,
 I unfortunately ended up deciding to write yet another one.  Here is a
 bit of information on related modules and how this one differs.

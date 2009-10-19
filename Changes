@@ -1,5 +1,17 @@
 Revision history for Proc-Launcher
 
+0.0.8 Mon Oct 19, 2009  5:41 pm
+
+  - better verification of PID, remove Scalar::Util dependency
+
+  - defining 'recommends' section in meta yaml for POE
+    - POE is only necessary for the 'tail' plugin
+    - uses Dist::Zilla::Plugin::MetaRecommends - just uploaded minutes ago
+
+0.0.7 Sat Oct 17, 2009 11:10 pm
+
+  - just bumping version number after resetting version for a few classes
+
 0.0.6 Sat Oct 17, 2009  6:22 pm
 
   - create pid_dir if it does not already exist

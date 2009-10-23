@@ -13,16 +13,16 @@ unlink $file;
 my $start_method = sub { exit };
 
 my $launcher = Proc::Launcher->new( start_method => $start_method,
-                                        daemon_name  => 'test',
-                                        pid_file     => $file,
-                                    );
+                                    daemon_name  => 'test',
+                                    pid_file     => $file,
+                                );
 
 ok( ! $launcher->is_running(),
     "Checking that test process is not already running"
 );
 
 ok( $launcher->start(),
-    "Starting the test process"
+    "Starting the test process which should immediately exit"
 );
 
 sleep 1;

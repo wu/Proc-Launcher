@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use Mouse;
 
-our $VERSION = '0.0.8';
+our $VERSION = '0.0.9';
 
 #_* Libraries
 
@@ -23,10 +23,18 @@ Proc::Launcher - yet another forking process controller
 
     # define a method to start your application if it isn't already running
     use MyApp;
-    my $start_myapp = sub { MyApp->new()->run( $some_shared_data ) };
+    my $start_myapp = sub { MyApp->new( context => $some_shared_data )->run() };
 
     # create a new launcher object
     my $launcher = Proc::Launcher->new( start_method => $start_myapp,
+                                        daemon_name  => 'myapp',
+                                      );
+
+    # an alternate version of the same thing without the subroutine reference
+    my $launcher = Proc::Launcher->new( class        => 'MyApp',
+                                        start_method => 'run'
+                                        context      => $some_shared_data,
+                                        start_method => $start_myapp,
                                         daemon_name  => 'myapp',
                                       );
 
@@ -112,11 +120,11 @@ be modified to be daemonized.
 
 This library does not use or require an event loop (e.g. AnyEvent,
 POE, etc.), but is fully usable from with an event loop since objects
-of this class never call sleep() since doing so inside a
-single-threaded event loop generally causes everything else running in
-the event loop to wait.  This does mean that methods such as stop()
-will return immediately without providing a status.  See more about
-this in the note below in rm_zombies().
+of this class never call sleep() (doing so inside a single-threaded
+event loop causes everything else running in the event loop to wait).
+This does mean that methods such as stop() will return immediately
+without providing a status.  See more about this in the note below in
+rm_zombies().
 
 For compatibility with the planned upcoming GRID::Launcher module
 (which uses GRID::Machine), this module and it's dependencies are
@@ -138,13 +146,21 @@ Supervisor::Session.  This looks worthy of further investigation.
 
 =cut
 
+#_* Roles
+
+with 'Proc::Launcher::Roles::Launchable';
+
 #_* Attributes
 
 has 'debug'        => ( is => 'ro', isa => 'Bool', default => 0 );
 
 has 'daemon_name'  => ( is => 'ro', isa => 'Str', required => 1 );
 
-has 'start_method' => ( is => 'ro', isa => 'CodeRef', required => 1 );
+has 'context'      => ( is => 'ro' );
+
+has 'class'        => ( is => 'ro', isa => 'Str' );
+# can be either a coderef, or if a class is specified, can be a string :/
+has 'start_method' => ( is => 'ro', required => 1 );
 
 has 'pid_dir'      => ( is => 'ro',
                         isa => 'Str',
@@ -170,9 +186,23 @@ has 'log_file'     => ( is => 'ro',
                         isa => 'Str',
                         lazy => 1,
                         default => sub {
-                            my ( $self ) = @_;
+                            my $self = shift;
                             my $daemon = $self->daemon_name;
                             return join "/", $self->pid_dir, "$daemon.log";
+                        },
+                    );
+
+has 'file_tail'    => ( is => 'ro',
+                        isa => 'File::Tail',
+                        lazy => 1,
+                        default => sub {
+                            require File::Tail;
+                            my $self = shift;
+                            unless ( -r $self->log_file ) { system( 'touch', $self->log_file ) }
+                            return File::Tail->new( name     => $self->log_file,
+                                                    nowait   => 1,
+                                                    interval => 1,
+                                                );
                         },
                     );
 
@@ -180,7 +210,7 @@ has 'pid'          => ( is => 'rw',
                         isa => 'Int',
                         lazy => 1,
                         default => sub {
-                            my ( $self ) = @_;
+                            my $self = shift;
                             return $self->read_pid();
                         },
                     );
@@ -239,7 +269,13 @@ sub start {
         print "Starting process: pid = $$: ", scalar localtime, "\n\n";
 
         # child
-        $self->start_method->( $args );
+        if ( $self->class ) {
+            my $method = $self->start_method;
+            $self->class->new( context => $self->context )->$method( $args );
+        }
+        else {
+            $self->start_method->( $args );
+        }
         exit;
     }
 
@@ -472,6 +508,32 @@ sub remove_pidfile {
     print "REMOVING PIDFILE: ", $self->pid_file, "\n" if $self->debug;
     unlink $self->pid_file;
 }
+
+=item read_log
+
+Return any new log data since the last offset was written.  If there
+was no offset, set the offset to the current end of file.
+
+You may want to call this before performing any operation on the
+daemon in order to set the position to the end of the file.  Then
+perform your operation, wait a moment, and then call read_log() to get
+any output generated from your command while you waited.
+
+=cut
+
+sub read_log {
+    my ( $self, $subref ) = @_;
+
+    my $name = $self->daemon_name;
+
+    while ( my $line=$self->file_tail->read ) {
+        chomp $line;
+        $subref->( "$name: $line" );
+    }
+
+    return 1;
+}
+
 
 1;
 

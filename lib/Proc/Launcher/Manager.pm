@@ -320,9 +320,10 @@ sub read_log {
     }
 }
 
-
 =back
 
 =cut
+
+no Mouse;
 
 1;

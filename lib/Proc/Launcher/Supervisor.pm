@@ -14,6 +14,8 @@ sub monitor {
     }
 }
 
+no Mouse;
+
 1;
 
 __END__

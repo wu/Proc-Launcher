@@ -271,6 +271,10 @@ sub start {
         # child
         if ( $self->class ) {
             my $method = $self->start_method;
+
+            my $class = $self->class;
+            eval "use $class";
+
             $self->class->new( context => $self->context )->$method( $args );
         }
         else {
@@ -349,7 +353,7 @@ sub is_running {
 
     if ( kill 0, $self->pid ) {
         print "STILL RUNNING\n" if $self->debug;
-        return 1;
+        return $self->daemon_name;
     }
 
     print "PROCESS NOT RUNNING\n" if $self->debug;
@@ -534,6 +538,7 @@ sub read_log {
     return 1;
 }
 
+no Mouse;
 
 1;
 

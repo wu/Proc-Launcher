@@ -8,6 +8,8 @@ use Getopt::Long;
 use Pod::Usage;
 use YAML;
 
+use Time::HiRes qw(usleep);
+
 use lib "$FindBin::Bin/../lib";
 use Proc::Launcher::Manager;
 
@@ -110,7 +112,11 @@ if ( $options{supervisor} ) {
     $monitor->supervisor();
 }
 
-if ( exists $options{tail} ) {
+if ( defined $options{tail} ) {
+
+    # we're sleeping for 1/10th of a second, so we have to take the
+    # number of seconds specified * 10.
+    my $max_count = $options{tail} ? $options{tail} * 10 : 0;
 
     # display all new log output to stdout
     my $count;
@@ -118,13 +124,15 @@ if ( exists $options{tail} ) {
 
         # if tail was passed an integer, quit after the specified
         # number of 1-second loops.
-        if ( $options{tail} ) {
+        if ( $max_count ) {
             $count++;
-            last if $count > $options{tail};
+            last if $count > $max_count;
         }
 
         $monitor->read_log( sub { print "$_[0]\n" } );
-        sleep 1;
+
+        # sleep for .1 seconds
+        usleep 100_000;
     }
 }
 

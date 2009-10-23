@@ -8,8 +8,11 @@ Revision history for Proc-Launcher
       - greatly simplifies GRID::Launcher design
     - created 'Launchable' role to enforce standard interface
 
-  - allow new() to be called with a class+method in addition to sub ref
+  - Launcher now allows either class name + method name or sub ref
     - more compatible with GRID::Launcher
+
+  - replaced POE tail with a much simpler File::Tail implementation
+    - manager now gets log file end position as soon as daemons are registered
 
 0.0.8 Mon Oct 19, 2009  5:41 pm
 

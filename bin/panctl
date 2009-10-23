@@ -22,10 +22,11 @@ unless ( GetOptions ( '-start'      => \$options{start},
                       '-restart'    => \$options{restart},
                       '-force'      => \$options{force},
                       '-supervisor' => \$options{supervisor},
-                      '-tail'       => \$options{tail},
+                      '-tail:i'     => \$options{tail},
                       '-config'     => \$options{configfile},
+                      '-daemon=s'   => \$options{daemon},
                       '-v|verbose!' => \$options{verbose},
-                      '-help|?'		=> \$options{help},
+                      '-help|?'     => \$options{help},
     )
 ) { pod2usage( -exitval => 1, -verbose => 1 ) }
 
@@ -63,6 +64,11 @@ my $monitor = Proc::Launcher::Manager->new( app_name  => 'panctl',
 
 print "\n";
 for my $name ( keys %{ $config } ) {
+
+    if ( $options{daemon} ) {
+        next unless $options{daemon} eq "all" || $name =~ m/$options{daemon}/;
+    }
+
     print "Loaded: $name: $config->{$name}->{description}\n";
 
     my $cmd = $config->{$name}->{command};
@@ -78,25 +84,25 @@ for my $name ( keys %{ $config } ) {
 print "\n";
 
 if ( $options{start} ) {
-    $monitor->start_all();
+    $monitor->start();
 }
 elsif ( $options{restart} && $options{force} ) {
-    $monitor->stop_all();
+    $monitor->stop();
     sleep 3;
-    $monitor->force_stop_all();
+    $monitor->force_stop();
     sleep 1;
-    $monitor->start_all();
+    $monitor->start();
 }
 elsif ( $options{restart} ) {
-    $monitor->stop_all();
+    $monitor->stop();
     sleep 1;
-    $monitor->start_all();
+    $monitor->start();
 }
 elsif ( $options{stop} && $options{force} ) {
-    $monitor->force_stop_all();
+    $monitor->force_stop();
 }
 elsif ( $options{stop} ) {
-    $monitor->stop_all();
+    $monitor->stop();
 }
 
 if ( $options{supervisor} ) {
@@ -104,9 +110,22 @@ if ( $options{supervisor} ) {
     $monitor->supervisor();
 }
 
-if ( $options{tail} ) {
-    print "Monitoring and displaying output from selected daemons\n";
-    $monitor->tail();
+if ( exists $options{tail} ) {
+
+    # display all new log output to stdout
+    my $count;
+    while ( 1 ) {
+
+        # if tail was passed an integer, quit after the specified
+        # number of 1-second loops.
+        if ( $options{tail} ) {
+            $count++;
+            last if $count > $options{tail};
+        }
+
+        $monitor->read_log( sub { print "$_[0]\n" } );
+        sleep 1;
+    }
 }
 
 

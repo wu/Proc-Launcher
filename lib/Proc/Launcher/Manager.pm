@@ -32,14 +32,18 @@ Proc::Launcher::Manager - spawn and manage multiple Proc::Launcher objects
 
     # start all registered daemons.  processes that are already
     # running won't be restarted.
-    $monitor->start_all();
+    $monitor->start();
 
     # stop all daemons
-    $monitor->stop_all();
+    $monitor->stop();
     sleep 1;
-    $monitor->force_stop_all();
+    $monitor->force_stop();
 
-    # get a specific daemon or perform actions on one (sorry demeter)
+    # display all processes stdout/stderr from the log file that's
+    # been generated since we started
+    $monitor->read_log( sub { print "$_[0]\n" } );
+
+    # get a specific daemon or perform actions on one
     my $webui = $monitor->daemon('webui');
     $monitor->daemon('webui')->start();
 
@@ -62,19 +66,16 @@ that will monitor the other daemons at regular intervals and restart
 any that have stopped.  Note that only one supervisor can be running
 at any given time for each pid_dir.
 
-A tail() method also exists that will spawn a POE::Wheel::FollowTail
-for each daemon's stdout/stderr log files and allow you to provide a
-callback to process the output.
-
 There is no tracking of inter-service dependencies nor predictable
 ordering of service startup.  Instead, daemons should be designed to
 wait for needed resources.  See Launcher::Cascade if you need to
 handle dependencies.
 
-
-
-
 =cut
+
+#_* Roles
+
+with 'Proc::Launcher::Roles::Launchable';
 
 #_* Attributes
 
@@ -112,10 +113,15 @@ sub spawn {
 
     $options{pid_dir} = $self->pid_dir;
 
+    my $daemon;
     unless ( $self->{daemons}->{ $options{daemon_name} } ) {
-        $self->{daemons}->{ $options{daemon_name} } = Proc::Launcher->new( %options );
+        $daemon = Proc::Launcher->new( %options );
     }
 
+    # just capturing the position of the tail end of the log file
+    $self->read_log( undef, $daemon );
+
+    $self->{daemons}->{ $options{daemon_name} } = $daemon;
 }
 
 =item daemon( 'daemon_name' )
@@ -163,14 +169,14 @@ sub daemons_names {
     return ( sort keys %{ $self->{daemons} } );
 }
 
-=item daemons_running()
+=item is_running()
 
 Return a list of the names of daemons that are currently running.
 
-This will begin by calling rm_zombies() on the first daemon, sleeping
-a second, and then calling rm_zombies() again.  So far the test cases
-have always passed when using this strategy, and inconsistently passed
-with any subset thereof.
+This will begin by calling rm_zombies() on one of daemon objects,
+sleeping a second, and then calling rm_zombies() again.  So far the
+test cases have always passed when using this strategy, and
+inconsistently passed with any subset thereof.
 
 While it seems that this is more complicated than shutting down a
 single process, it's really just trying to be a bit more efficient.
@@ -180,9 +186,12 @@ this method is likely to be a bit more efficient and will hopefully
 only need to be called once (after the daemons have been given
 necessary time to shut down).
 
+This may be reworked a bit in the future since calling sleep will halt
+all processes in single-threaded cooperative multitasking frameworks.
+
 =cut
 
-sub daemons_running {
+sub is_running {
     my ( $self ) = @_;
 
     my @daemon_names = $self->daemons_names();
@@ -198,7 +207,7 @@ sub daemons_running {
     # processes are running.
     $self->daemon($daemon_names[0])->rm_zombies();
 
-    my @running;
+    my @running = ();
 
     for my $daemon_name ( @daemon_names ) {
         if ( $self->daemon($daemon_name)->is_running() ) {
@@ -209,14 +218,14 @@ sub daemons_running {
     return @running;
 }
 
-=item start_all( $data )
+=item start( $data )
 
-Call the start() method on all daemons.  If the daemon is already
-running it will not be restarted.
+Call the start() method on all registered daemons.  If the daemon is
+already running it will not be restarted.
 
 =cut
 
-sub start_all {
+sub start {
     my ( $self, $data ) = @_;
 
     for my $daemon ( $self->daemons() ) {
@@ -231,13 +240,13 @@ sub start_all {
 }
 
 
-=item stop_all()
+=item stop()
 
 Call the stop() method on all daemons.
 
 =cut
 
-sub stop_all {
+sub stop {
     my ( $self ) = @_;
 
     for my $daemon ( $self->daemons() ) {
@@ -248,13 +257,13 @@ sub stop_all {
     return 1;
 }
 
-=item force_stop_all()
+=item force_stop()
 
 Call the force_stop method on all daemons.
 
 =cut
 
-sub force_stop_all {
+sub force_stop {
     my ( $self ) = @_;
 
     for my $daemon ( $self->daemons() ) {
@@ -297,16 +306,18 @@ sub supervisor {
     $self->{supervisor}->start();
 }
 
-=item tail()
+=item read_log()
 
 =cut
 
-sub tail {
-    my ( $self, $output_callback ) = @_;
+sub read_log {
+    my ( $self, $output_callback, @daemons ) = @_;
 
-    print "Tailing all log files\n";
-    require Proc::Launcher::Tail;
-    Proc::Launcher::Tail->new( output_callback => $output_callback )->tail( $self );
+    unless ( scalar @daemons ) { @daemons = $self->daemons() }
+
+    for my $daemon ( @daemons ) {
+        $daemon->read_log( $output_callback );
+    }
 }
 
 

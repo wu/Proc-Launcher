@@ -8,8 +8,7 @@ BEGIN {
 }
 
 my @MODULES = (
-    'Perl::Critic 1.098',
-    'Test::Perl::Critic 1.01',
+    'Test::NoTabs'
 );
 
 # Don't run tests during end-user installs
@@ -27,6 +26,6 @@ foreach my $MODULE ( @MODULES ) {
     }
 }
 
-all_critic_ok();
+all_perl_files_ok();
 
 1;

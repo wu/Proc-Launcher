@@ -1,5 +1,16 @@
 Revision history for Proc-Launcher
 
+0.0.9 Thu Oct 22, 2009  9:12 pm
+
+  - rework of the manager start/stop/restart API
+    - manager uses the same API as the launcher
+      - remove the "_all" from the names
+      - greatly simplifies GRID::Launcher design
+    - created 'Launchable' role to enforce standard interface
+
+  - allow new() to be called with a class+method in addition to sub ref
+    - more compatible with GRID::Launcher
+
 0.0.8 Mon Oct 19, 2009  5:41 pm
 
   - better verification of PID, remove Scalar::Util dependency

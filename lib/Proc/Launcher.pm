@@ -3,11 +3,12 @@ use strict;
 use warnings;
 use Mouse;
 
-our $VERSION = '0.0.9';
+our $VERSION = '0.0.12';
 
 #_* Libraries
 
 use File::Path;
+use File::Tail;
 use POSIX qw(setsid :sys_wait_h);
 
 #_* POD
@@ -196,7 +197,6 @@ has 'file_tail'    => ( is => 'ro',
                         isa => 'File::Tail',
                         lazy => 1,
                         default => sub {
-                            require File::Tail;
                             my $self = shift;
                             unless ( -r $self->log_file ) { system( 'touch', $self->log_file ) }
                             return File::Tail->new( name     => $self->log_file,
@@ -273,7 +273,7 @@ sub start {
             my $method = $self->start_method;
 
             my $class = $self->class;
-            eval "use $class";
+            eval "require $class"; ## no critic
 
             $self->class->new( context => $self->context )->$method( $args );
         }

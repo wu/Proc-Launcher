@@ -1,5 +1,21 @@
 Revision history for Proc-Launcher
 
+0.0.12 Sat Oct 24, 2009  5:09 pm
+
+  - File::Tail is now a prereq
+  - added kwalitee release test
+
+0.0.11 Fri Oct 23, 2009  5:57 pm
+
+  - add some missing bits to new role including POD
+  - resolve perl critic error with module loaded at runtime
+
+0.0.10 Fri Oct 23, 2009  3:31 am
+
+  - Launcher tweaks
+    - if given class name + method name, load the class
+    - is_running returns name of running daemon, more consist with manager
+
 0.0.9 Thu Oct 22, 2009  9:12 pm
 
   - rework of the manager start/stop/restart API

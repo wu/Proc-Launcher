@@ -1,5 +1,9 @@
 Revision history for Proc-Launcher
 
+0.0.14 Sun Oct 25, 2009  4:59 pm
+
+  - bug fix in Proc::Launcher::Supervisor - update for API change in manager
+
 0.0.13 Sat Oct 24, 2009  7:35 pm
 
   - settin $VERSION in all modules

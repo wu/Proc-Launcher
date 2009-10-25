@@ -11,7 +11,7 @@ sub monitor {
     my ( $self, $manager ) = @_;
 
     while ( 1 ) {
-        $manager->start_all();
+        $manager->start();
         sleep $self->monitor_delay;
     }
 }

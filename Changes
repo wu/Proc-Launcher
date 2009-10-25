@@ -1,5 +1,11 @@
 Revision history for Proc-Launcher
 
+0.0.15 Sun Oct 25, 2009  6:14 pm
+
+  - added a new 'tail' method to Proc::Launcher::Manager
+    - uses File::Tail::select
+    - remove tail logic from panctl
+
 0.0.14 Sun Oct 25, 2009  4:59 pm
 
   - bug fix in Proc::Launcher::Supervisor - update for API change in manager

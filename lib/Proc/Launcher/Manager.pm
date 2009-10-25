@@ -322,6 +322,65 @@ sub read_log {
     }
 }
 
+=item tail( $output_callback, $timeout_secs )
+
+Poll all daemons for output for the specified number of seconds.  Any
+output received in that time will be sent to $output_callback.  Each
+line of output will be prefixed with the daemon name.
+
+
+
+=cut
+
+sub tail {
+    my ( $self, $output_callback, $timeout ) = @_;
+
+    # create an array of Log::Tail objects to be passed to select()
+    my @tails;
+
+    # select() will return the paths associated with each daemon, so
+    # we need to be able to look up the name of a daemon based on it's
+    # log file path.
+    my %daemons;
+    for my $daemon ( $self->daemons() ) {
+        push @tails, $daemon->file_tail;
+        $daemons{ $daemon->log_file } = $daemon->daemon_name;
+    }
+
+    # calculate the time when we're done processing.
+    my $end = time + $timeout;
+
+    # display all new log output to stdout
+    my $count;
+    while ( 1 ) {
+
+        my ($nfound,$timeleft,@pending)=
+            File::Tail::select(undef,undef,undef,1,@tails);
+
+        if ($nfound) {
+            foreach (@pending) {
+                my $daemon_name = $daemons{ $_->{input} } || $_->{input};
+                my $text = $_->read;
+
+                for my $line ( split /\n/, $text ) {
+                    my $output = sprintf( "%-8s: %-1s", $daemon_name, $line );
+                    $output_callback->( "$output\n" );
+                }
+            }
+        }
+        else {
+            sleep 1;
+        }
+
+        # if timeout was specified, quit when the timeout has passed.
+        if ( $timeout ) {
+            last if time > $end;
+        }
+    }
+}
+
+
+
 =back
 
 =cut

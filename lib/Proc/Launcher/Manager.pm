@@ -3,6 +3,8 @@ use strict;
 use warnings;
 use Mouse;
 
+our $VERSION;
+
 use Carp;
 use File::Path;
 use Proc::Launcher;

@@ -1,5 +1,9 @@
 Revision history for Proc-Launcher
 
+0.0.13 Sat Oct 24, 2009  7:35 pm
+
+  - settin $VERSION in all modules
+
 0.0.12 Sat Oct 24, 2009  5:09 pm
 
   - File::Tail is now a prereq

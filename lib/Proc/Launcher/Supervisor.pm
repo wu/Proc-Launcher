@@ -3,6 +3,8 @@ use strict;
 use warnings;
 use Mouse;
 
+our $VERSION;
+
 has 'monitor_delay' => ( is => 'rw', isa => 'Int', default => 15 );
 
 sub monitor {

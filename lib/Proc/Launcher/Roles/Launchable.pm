@@ -3,6 +3,8 @@ use strict;
 use warnings;
 use Mouse::Role;
 
+our $VERSION;
+
 requires 'start';
 requires 'stop';
 #requires 'restart';

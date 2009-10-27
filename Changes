@@ -1,5 +1,9 @@
 Revision history for Proc-Launcher
 
+0.0.17 Tue Oct 27, 2009  2:30 am
+
+  - added docs for panctl
+
 0.0.16 Mon Oct 26, 2009 10:09 pm
 
   - fix a bug involving error 'Filehandle STDIN reopened as $fh only for output'

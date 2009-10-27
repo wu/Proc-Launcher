@@ -142,3 +142,166 @@ if ( defined $options{tail} ) {
 
 __END__
 
+=head1 NAME
+
+ panctl - start, stop, and manage daemons, programs, and scripts
+
+=head1 SYNOPSIS
+
+The config file should live in ~/.panctl/panctl.conf.
+
+    ssh-foo:
+      command: ssh -L 2222:foohost:22 somehost -N
+      description: ssh tunnel for otherhost
+    ssh-bar:
+      command: ssh -L 2223:barhost:22 somehost -N
+      description: ssh tunnel for someotherhost
+    synergy:
+      command: /Applications/synergy-1.3.1/synergys -c /my/synergy.conf -d INFO -f
+      description: synergy keyboard/mouse sharing
+
+Command line options:
+
+    # control a specific named daemon
+    panctl -daemon ssh-foo -start
+    panctl -daemon ssh-foo -stop
+    panctl -daemon ssh-foo -stop -force
+    panctl -daemon ssh-foo -restart
+
+    # control all daemons with 'ssh' in the name
+    panctl -daemon ssh -start
+
+    # control all configured daemons
+    panctl -all -start
+    panctl -all -stop
+    panctl -all -stop -force
+    panctl -all -restart
+
+    # monitor the log files (tail -f) of all configured daemons
+    panctl -all -tail
+
+    # start the supervisor process, restarts any daemons that fail
+    panctl -all -supervisor
+
+
+
+=head1 DESCRIPTION
+
+This script will allow you to configure a list of services (e.g. ssh
+tunnels, daemons, scripts, etc.) that can be started and stopped
+apachectl-style.  In addition, a watchdog-type process can be spawned
+to monitor configured daemons and automatically restart them in the
+event that they die.
+
+All daemon stdout/stderr is written to ~/.panctl/daemon_name.log, and
+the pid will be written to ~/.panctl/daemon_name.pid.
+
+This works great for keeping a bunch of ssh tunnels and other scripts
+and daemons running.
+
+=head2 OPTIONS
+
+The following options are supported by this command
+
+=over 8
+
+=item -daemon [regexp]
+
+Selects all daemons whose names match the specified regexp.
+
+=item -all
+
+Selects all configured daemons.
+
+=item -supervisor
+
+Combine with -start or -stop to start and stop the supervisor process.
+
+=item -tail [timeout]
+
+Create a File::Tail for each daemon's stdout/stderr log file, and
+monitor it for the specified number of seconds.  If no timeout is
+specified, it will never halt.
+
+=item -start
+
+Start all selected daemons
+
+=item -stop
+
+Stop all selected daemons by sending them a 'kill -HUP'.
+
+When combined with -force, will send a 'kill -9'
+
+=item -restart
+
+Calls stop() on the selected daemons, followed by start().
+
+=back
+
+=head1 DEPENDENCIES
+
+This script relies heavily on L<Proc::Launcher>.  See the docs for
+L<Proc::Launcher> for more information.
+
+=head1 BUGS AND LIMITATIONS
+
+Only immediate child processes are tracked.  Any processes spawned by
+launched processes will not be tracked.
+
+The most obvious limitation is probably that backgrounding or doing a
+fork()/exec() (daemonizing) in executed scripts is not allowed.  The
+pid of any script that fully daemonizes will be lost by
+L<Proc::Launcher>, and will be considered failed which may lead to the
+process being restarted.
+
+Please see the L<Proc::Launcher> and L<Proc::Launcher::Manager> docs for
+limitations.
+
+Don't even try using this with apache.  While it is possible to make
+apache run in a non-daemonized mode, you probably don't want to do it
+that way.
+
+
+Patches are welcome.
+
+=head1 SEE ALSO
+
+
+=head1 AUTHOR
+
+VVu@geekfarm.org
+
+
+=head1 LICENCE AND COPYRIGHT
+
+Copyright (c) 2008, VVu@geekfarm.org
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+- Redistributions of source code must retain the above copyright
+  notice, this list of conditions and the following disclaimer.
+
+- Redistributions in binary form must reproduce the above copyright
+  notice, this list of conditions and the following disclaimer in the
+  documentation and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+
+
+

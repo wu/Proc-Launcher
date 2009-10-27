@@ -40,11 +40,28 @@ Proc::Launcher::Supervisor - restart watched processes that have exited
 This is a tiny module that's designed for use with panctl and
 Proc::Launcher, where it is forked off and run as a separate process.
 
+=head1 ATTRIBUTES
+
+=over 8
+
+=item monitor_delay
+
+Number of seconds to sleep before attempting to restart any daemons
+that aren't running.  Defaults to 15.
+
+=item manager
+
+A Proc::Launcher::Manager object, with daemons already registered.
+The manager's start method will be called at regular intervals (see
+monitor_delay).
+
+=back
+
 =head1 SUBROUTINES/METHODS
 
 =over 8
 
-=item $obj->monitor( $manager )
+=item $obj->monitor()
 
 This tiny class contains only this one method.  It requires a
 reference to a Proc::Launcher::Manager object in order to determine

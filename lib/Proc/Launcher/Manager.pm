@@ -91,7 +91,8 @@ with 'Proc::Launcher::Roles::Launchable';
 
 has 'debug'      => ( is         => 'ro',
                       isa        => 'Bool',
-                      default    => 0 );
+                      default    => 0,
+                  );
 
 has 'pid_dir'    => ( is         => 'ro',
                       isa        => 'Str',

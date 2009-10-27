@@ -1,5 +1,14 @@
 Revision history for Proc-Launcher
 
+0.0.16 Mon Oct 26, 2009 10:09 pm
+
+  - fix a bug involving error 'Filehandle STDIN reopened as $fh only for output'
+    - reopen STDIN to /dev/null rather than closing it in forked process
+
+  - allow start/stop/force_stop methods to be called on supervisor
+    - manager API change for the supervisor, see POD docs
+  
+
 0.0.15 Sun Oct 25, 2009  6:14 pm
 
   - added a new 'tail' method to Proc::Launcher::Manager

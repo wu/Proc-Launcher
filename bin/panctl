@@ -27,6 +27,7 @@ unless ( GetOptions ( '-start'      => \$options{start},
                       '-tail:i'     => \$options{tail},
                       '-config'     => \$options{configfile},
                       '-daemon=s'   => \$options{daemon},
+                      '-a|all'      => \$options{all},
                       '-v|verbose!' => \$options{verbose},
                       '-help|?'     => \$options{help},
     )
@@ -68,7 +69,7 @@ print "\n";
 for my $name ( keys %{ $config } ) {
 
     if ( $options{daemon} ) {
-        next unless $options{daemon} eq "all" || $name =~ m/$options{daemon}/;
+        next unless $options{all} || $options{daemon} eq "all" || $name =~ m/$options{daemon}/ || $options{supervisor};
     }
 
     print "Loaded: $name: $config->{$name}->{description}\n";
@@ -85,6 +86,29 @@ for my $name ( keys %{ $config } ) {
 }
 print "\n";
 
+### supervisor
+if ( $options{supervisor} ) {
+
+    # if stop was specified, shut it down
+    if ( $options{stop} ) {
+        if ( $options{force} ) {
+            print "Force stopping the supervisor process...\n";
+            $monitor->supervisor->force_stop();
+        }
+        else {
+            print "Stopping the supervisor process...\n";
+            $monitor->supervisor->stop();
+        }
+    }
+    else {
+        # if stop wasn't specified, start it up
+        print "Starting the supervisor process...\n";
+        $monitor->supervisor->restart();
+    }
+    exit;
+}
+
+### daemons
 if ( $options{start} ) {
     $monitor->start();
 }
@@ -107,11 +131,7 @@ elsif ( $options{stop} ) {
     $monitor->stop();
 }
 
-if ( $options{supervisor} ) {
-    print "Starting the supervisor process...\n";
-    $monitor->supervisor();
-}
-
+# following log files
 if ( defined $options{tail} ) {
 
     $monitor->tail( sub { print @_ },

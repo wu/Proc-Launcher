@@ -5,13 +5,21 @@ use Mouse;
 
 our $VERSION;
 
-has 'monitor_delay' => ( is => 'rw', isa => 'Int', default => 15 );
+has 'monitor_delay' => ( is       => 'rw',
+                         isa      => 'Int',
+                         default  => 15,
+                     );
+
+has 'manager'       => ( is       => 'rw',
+                         isa      => 'Proc::Launcher::Manager',
+                         required => 1,
+                     );
 
 sub monitor {
-    my ( $self, $manager ) = @_;
+    my ( $self ) = @_;
 
     while ( 1 ) {
-        $manager->start();
+        $self->manager->start();
         sleep $self->monitor_delay;
     }
 }

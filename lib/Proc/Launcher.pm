@@ -35,7 +35,6 @@ Proc::Launcher - yet another forking process controller
     my $launcher = Proc::Launcher->new( class        => 'MyApp',
                                         start_method => 'run'
                                         context      => $some_shared_data,
-                                        start_method => $start_myapp,
                                         daemon_name  => 'myapp',
                                       );
 

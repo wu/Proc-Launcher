@@ -21,17 +21,21 @@ Proc::Launcher::Manager - spawn and manage multiple Proc::Launcher objects
 
     my $shared_config = { x => 1, y => 2 };
 
-    my $monitor = Proc::Launcher::Manager->new( app_name  => 'MyApp',
-                                                    );
+    my $monitor = Proc::Launcher::Manager->new( app_name  => 'MyApp' );
 
+    # a couple of different components
     $monitor->spawn( daemon_name  => 'component1',
                      start_method => sub { MyApp->start_component1( $config ) }
                    );
     $monitor->spawn( daemon_name  => 'component2',
                      start_method => sub { MyApp->start_component2( $config ) }
                    );
+
+    # using class/method/context rather than a code ref
     $monitor->spawn( daemon_name  => 'webui',
-                     start_method => sub { MyApp->start_webui( $config ) }
+                     class        => 'MyApp::WebUI',
+                     start_method => 'start_webui',
+                     context      => $config,
                    );
 
     # start all registered daemons.  processes that are already

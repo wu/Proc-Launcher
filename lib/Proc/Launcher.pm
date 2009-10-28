@@ -73,7 +73,7 @@ launching process.  All stdout and stderr from the child processes is
 written to a log file.
 
 For more useful functions (e.g. a supervisor to restart the process that
-die), see Proc::Launcher::Manager.
+die), see L<Proc::Launcher::Manager>.
 
 =head1 RELATED WORK
 
@@ -86,20 +86,21 @@ bit of information on related modules and how this one differs.
 While it is possible to exec() and manage external executables in the
 child processes, that is merely an afterthought in this module.  If
 you are looking for a module to manage external executables, you might
-also want to check out Server::Control, App::Control, or App::Daemon
-on CPAN, or ControlFreak on github.  See also Proc::PID::File.
+also want to check out L<Server::Control>, L<App::Control>, or
+L<App::Daemon> on CPAN, or ControlFreak on github.  See also
+L<Proc::PID::File>.
 
 On the other hand, if you're looking for a library to spawn dependent
 child processes that maintain stdout/stderr/stdin connected to the
-child, check out IPC::Run, IPC::ChildSafe, Proc::Simple,
-Proc::Reliable, etc.  This module assumes that all child processes
+child, check out L<IPC::Run>, L<IPC::ChildSafe>, L<Proc::Simple>,
+L<Proc::Reliable>, etc.  This module assumes that all child processes
 will close stdin/stdout/stderr and potentially live through multiple
 invocations/restarts of the launcher.
 
 This library does not do anything like forking/pre-forking multiple
 processes for a single daemon (e.g. for a high-volume server, see
-Net::Server::PreFork) or limiting the maximum number of running
-daemons (see Proc::Queue or Parallel::Queue).  Instead it is assumed
+L<Net::Server::PreFork>) or limiting the maximum number of running
+daemons (see L<Proc::Queue> or L<Parallel::Queue>).  Instead it is assumed
 that you are dealing with is a fixed set of named daemons, each of
 which is associated with a single process to be managed.  Of course
 any managed processes could fork it's own children.  Note that only
@@ -127,8 +128,8 @@ This does mean that methods such as stop() will return immediately
 without providing a status.  See more about this in the note below in
 rm_zombies().
 
-For compatibility with the planned upcoming GRID::Launcher module
-(which uses GRID::Machine), this module and it's dependencies are
+For compatibility with the planned upcoming L<GRID::Launcher> module
+(which uses L<GRID::Machine>), this module and it's dependencies are
 written in pure perl.
 
 The intended use for this library is that a supervising process will
@@ -136,14 +137,14 @@ acquire some (immutable) global configuration data which is then
 passed (at fork time) to one or more long-running component daemon
 processes.  In the Panoptes project, this library is used for starting
 and managing the various Panoptes components on each node
-(Panoptes::Monitor, Panoptes::Rules, Panoptes::Util::WebUI, etc.) and
-also for managing connections to the remote agents.
+(L<Panoptes::Monitor>, L<Panoptes::Rules>, L<Panoptes::Util::WebUI>,
+etc.) and also for managing connections to the remote agents.
 
 If you are aware of any other noteworthy modules in this vein, please
 let me know!
 
 UPDATE: Another module that just showed up on CPAN today is
-Supervisor::Session.  This looks worthy of further investigation.
+L<Supervisor::Session>.  This looks worthy of further investigation.
 
 =cut
 
@@ -217,7 +218,7 @@ has 'pid'          => ( is => 'rw',
 
 #_* Methods
 
-=head1 SUBROUTINES/METHODS
+=head1 METHODS
 
 =over 8
 

@@ -177,8 +177,11 @@ Command line options:
     panctl -all -stop -force
     panctl -all -restart
 
-    # monitor the log files (tail -f) of all configured daemons
+    # monitor the log files (tail -f) of daemons
     panctl -all -tail
+    panctl -daemon ssh-foo -tail
+    panctl -daemon ssh -tail
+    panctl -daemon ssh -tail -start
 
     # start the supervisor process, restarts any daemons that fail
     panctl -all -supervisor
@@ -217,11 +220,25 @@ Selects all configured daemons.
 
 Combine with -start or -stop to start and stop the supervisor process.
 
+When daemons are selected (with the -daemon flag), the supervisor will
+only monitor the specified daemons.
+
+Note that only one supervisor can be running at a time!  If you start
+a supervisor for a selected daemon, and then start it again for a
+different selected daemon, only the latter will be supervised.
+
 =item -tail [timeout]
 
-Create a File::Tail for each daemon's stdout/stderr log file, and
-monitor it for the specified number of seconds.  If no timeout is
-specified, it will never halt.
+Create a File::Tail to display all selected daemons' stdout/stderr log
+files.  The effect is similar to running 'tail -f' on all the log
+files.
+
+If a timeout is specified (optional), the log files will only be
+monitored for the specified number of seconds.
+
+When combined with other options, e.g. -start, the log file will be
+opened before performing any operations, so the output you see will
+reflect the output of any operations you performed.
 
 =item -start
 
@@ -262,10 +279,21 @@ Don't even try using this with apache.  While it is possible to make
 apache run in a non-daemonized mode, you probably don't want to do it
 that way.
 
+There is no log file maintenance.  If your daemons produce a lot of
+output, you will probably want to truncate the logs occasionally, e.g.:
+
+    echo >> ~/.panctl/daemon_name.log
+
+Alternately you could shut down the daemon, remove or gzip the log
+file, and then start the daemon back up.
 
 Patches are welcome.
 
 =head1 SEE ALSO
+
+  L<Proc::Launcher>
+  L<Proc::Launcher::Manager>
+  L<Proc::Launcher::Supervisor>
 
 
 =head1 AUTHOR

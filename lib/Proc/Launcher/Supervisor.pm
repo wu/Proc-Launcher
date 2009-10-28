@@ -57,7 +57,7 @@ monitor_delay).
 
 =back
 
-=head1 SUBROUTINES/METHODS
+=head1 METHODS
 
 =over 8
 

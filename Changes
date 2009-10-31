@@ -1,5 +1,18 @@
 Revision history for Proc-Launcher
 
+0.0.18 Fri Oct 30, 2009 11:42 pm
+
+  - added methods to enable/disable daemons
+
+    - daemon won't perform start() if disabled
+
+    - supervisor doesn't start() a daemon that is disabled
+      - no longer have to restart the supervisor to change the active daemon list
+
+    - disable() touches a file, enable() removes it
+      - daemon_name.disabled, next to daemon_name.{pid,log}
+  
+
 0.0.17 Tue Oct 27, 2009  2:30 am
 
   - added docs for panctl

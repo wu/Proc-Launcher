@@ -307,6 +307,40 @@ sub force_stop {
     return 1;
 }
 
+=item disable()
+
+Call the disable() method on all daemons.
+
+=cut
+
+sub disable {
+    my ( $self ) = @_;
+
+    for my $daemon ( $self->daemons() ) {
+        print "disabling daemon: ", $daemon->daemon_name, "\n";
+        $daemon->disable();
+    }
+
+    return 1;
+}
+
+=item enable()
+
+Call the enable() method on all daemons.
+
+=cut
+
+sub enable {
+    my ( $self ) = @_;
+
+    for my $daemon ( $self->daemons() ) {
+        print "enabling daemon: ", $daemon->daemon_name, "\n";
+        $daemon->enable();
+    }
+
+    return 1;
+}
+
 =item read_log()
 
 =cut

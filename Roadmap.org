@@ -1,0 +1,22 @@
+* send data to child processes
+
+  - option to create a named pipe for each child process
+
+  - daemon_name.cmd
+
+  - create named pipe 
+    - open as STDIN in child process
+    - child process can use this or simply ignore
+
+  - manager method to send text to each daemon's named pipe
+    - YAML/json filter?
+
+
+
+* manager method to get child status hash
+
+  - for each selected daemons
+    - is daemon running
+    - is daemon enabled
+
+

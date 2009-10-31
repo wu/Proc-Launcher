@@ -183,6 +183,16 @@ has 'pid_file'     => ( is => 'ro',
                         },
                     );
 
+has 'disable_file' => ( is => 'ro',
+                        isa => 'Str',
+                        lazy => 1,
+                        default => sub {
+                            my ( $self ) = @_;
+                            my $daemon = $self->daemon_name;
+                            return join "/", $self->pid_dir, "$daemon.disabled";
+                        },
+                    );
+
 has 'log_file'     => ( is => 'ro',
                         isa => 'Str',
                         lazy => 1,
@@ -243,6 +253,11 @@ immediately return success.
 
 sub start {
     my ( $self, $args ) = @_;
+
+    unless ( $self->is_enabled ) {
+        print $self->daemon_name, " daemon disabled, not starting\n";
+        return;
+    }
 
     if ( $self->is_running ) {
         print "Already running, no start needed\n" if $self->debug;
@@ -543,6 +558,56 @@ sub read_log {
 
     return 1;
 }
+
+=item disable()
+
+Create the disable flag file unless it already exists.
+
+=cut
+
+sub disable {
+    my ( $self ) = @_;
+
+    if ( $self->is_enabled() ) {
+        system( "touch", $self->disable_file );
+    }
+
+    return 1;
+}
+
+=item enable()
+
+If the disable flag file exists, remove it.
+
+=cut
+
+sub enable {
+    my ( $self ) = @_;
+
+    unless ( $self->is_enabled() ) {
+        unlink $self->disable_file;
+    }
+
+    return 1;
+}
+
+=item is_enabled()
+
+Check if the launcher is enabled.
+
+If the disable flag file exists, then the launcher will be considered
+disabled.
+
+=cut
+
+sub is_enabled {
+    my ( $self ) = @_;
+
+    return if -r $self->disable_file;
+
+    return 1;
+}
+
 
 no Mouse;
 

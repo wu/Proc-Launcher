@@ -19,17 +19,19 @@ use Proc::Launcher::Manager;
 
 my %options;
 
-unless ( GetOptions ( '-start'      => \$options{start},
-                      '-stop'       => \$options{stop},
-                      '-restart'    => \$options{restart},
-                      '-force'      => \$options{force},
-                      '-supervisor' => \$options{supervisor},
-                      '-tail:i'     => \$options{tail},
-                      '-config'     => \$options{configfile},
-                      '-daemon=s'   => \$options{daemon},
-                      '-a|all'      => \$options{all},
-                      '-v|verbose!' => \$options{verbose},
-                      '-help|?'     => \$options{help},
+unless ( GetOptions ( '-start'       => \$options{start},
+                      '-stop'        => \$options{stop},
+                      '-restart'     => \$options{restart},
+                      '-force'       => \$options{force},
+                      '-supervisor'  => \$options{supervisor},
+                      '-tail:i'      => \$options{tail},
+                      '-config'      => \$options{configfile},
+                      '-d|daemon=s'  => \$options{daemon},
+                      '-a|all'       => \$options{all},
+                      '-e|enable'    => \$options{enable},
+                      '-dis|disable' => \$options{disable},
+                      '-v|verbose!'  => \$options{verbose},
+                      '-help|?'      => \$options{help},
     )
 ) { pod2usage( -exitval => 1, -verbose => 1 ) }
 
@@ -106,6 +108,14 @@ if ( $options{supervisor} ) {
         $monitor->supervisor->restart();
     }
     exit;
+}
+
+# enable/disable daemons
+if ( $options{disable} ) {
+    $monitor->disable();
+}
+elsif ( $options{enable} ) {
+    $monitor->enable();
 }
 
 ### daemons
@@ -186,6 +196,13 @@ Command line options:
     # start the supervisor process, restarts any daemons that fail
     panctl -all -supervisor
 
+    # disable/enable a daemon.  when disabled, the daemon will not
+    # start and will not be restarted by the supervisor.
+    panctl -d ssh-foo -disable
+    panctl -d ssh-foo -disable -stop
+    panctl -d ssh-foo -enable
+    panctl -d ssh-foo -enable -start
+
 
 
 =head1 DESCRIPTION
@@ -253,6 +270,24 @@ When combined with -force, will send a 'kill -9'
 =item -restart
 
 Calls stop() on the selected daemons, followed by start().
+
+=item -disable
+
+Calls disable() on selected daemons.  The daemon will no longer
+respond to start() until enable() is called.  If a supervisor is
+monitoring the daemon, it will no longer be restarted.
+
+Disabling a daemon does not stop any currently running processes.  Can
+be combined with the -stop option to immediately shut down the daemon
+if it's currently running.
+
+=item -enable
+
+Calls enable() on selected daemons.  If the daemon is disabled, it
+will be enabled.
+
+Enabling a daemon does not start it.  Can be combined with the -start
+option to immediately start the daemon if it's not already running.
 
 =back
 

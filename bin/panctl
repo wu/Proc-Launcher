@@ -80,10 +80,10 @@ for my $name ( keys %{ $config } ) {
 
     #print "COMMAND $name: $cmd\n";
 
-    $monitor->spawn( daemon_name  => $name,
-                     start_method => sub { exec( $cmd ) },
-                     debug        => $options{verbose},
-                 );
+    $monitor->register( daemon_name  => $name,
+                        start_method => sub { exec( $cmd ) },
+                        debug        => $options{verbose},
+                    );
 
 }
 print "\n";
@@ -195,8 +195,10 @@ Command line options:
     panctl -daemon ssh -tail
     panctl -daemon ssh -tail -start
 
-    # start the supervisor process, restarts any daemons that fail
+    # start the supervisor process, restarts any enabled daemons that fail
     panctl -all -supervisor
+    # start the supervisor, only watching the monitoring and rules daemons
+    panctl -mon -rules -supervisor
 
     # disable/enable a daemon.  when disabled, the daemon will not
     # start and will not be restarted by the supervisor.
@@ -211,9 +213,9 @@ Command line options:
 
 This script will allow you to configure a list of services (e.g. ssh
 tunnels, daemons, scripts, etc.) that can be started and stopped
-apachectl-style.  In addition, a watchdog-type process can be spawned
-to monitor configured daemons and automatically restart them in the
-event that they die.
+apachectl-style.  In addition, a supervisor process can be spawned to
+monitor selected enabled daemons and automatically restart them in the event
+that they die.
 
 All daemon stdout/stderr is written to ~/.panctl/daemon_name.log, and
 the pid will be written to ~/.panctl/daemon_name.pid.

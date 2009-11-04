@@ -1,8 +1,17 @@
+* manager method to get child status hash
+
+  - for each selected daemons
+    - is daemon running
+    - is daemon enabled
+
+
+
 * send data to child processes
 
-  - option to create a named pipe for each child process
+  - still under consideration
 
-  - daemon_name.cmd
+  - option to create a named pipe for each child process
+    - daemon_name.cmd
 
   - create named pipe 
     - open as STDIN in child process
@@ -13,10 +22,22 @@
 
 
 
-* manager method to get child status hash
+* receive data from child processes
 
-  - for each selected daemons
-    - is daemon running
-    - is daemon enabled
+  - still under consideration
 
+  - option for manager to open a named pipe
+    - manager.cmd
+
+  - non-blocking reads
+
+  - child processes can write YAML/json data to manager
+    - not written to filesystem
+
+  - lock file?
+    - only one managing process can read data from the pipe at a time
+
+  - not reliable since there's no 'ack' for messages transmitted
+    - could be lost
+    - might get delivered to wrong manager process
 

@@ -1,5 +1,12 @@
 Revision history for Proc-Launcher
 
+0.0.19 Tue Nov  3, 2009 11:27 pm
+
+  - manager's spawn() method renamed register()
+    - spawn() was misleading since it doesn't actually start a process
+
+  - minor doc tweaks
+
 0.0.18 Fri Oct 30, 2009 11:42 pm
 
   - added methods to enable/disable daemons

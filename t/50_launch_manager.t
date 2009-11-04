@@ -16,8 +16,8 @@ my $manager = Proc::Launcher::Manager->new( app_name  => 'testapp',
 my @test_daemons = qw( test_1 test_2 test_3 );
 
 for my $daemon_name ( @test_daemons ) {
-    ok( $manager->spawn( daemon_name => $daemon_name, start_method => sub { sleep 600 } ),
-        "spawning test daemon: $daemon_name"
+    ok( $manager->register( daemon_name => $daemon_name, start_method => sub { sleep 600 } ),
+        "registering test daemon: $daemon_name"
     );
 
     ok( $manager->daemon($daemon_name)->start(),

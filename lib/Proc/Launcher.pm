@@ -94,7 +94,7 @@ module only manages processes that have been forked by this module.
 
 If you only want to read and write a PID file, see L<Proc::PID::File>.
 
-On the other hand, if you're looking for a library to spawn dependent
+On the other hand, if you're looking for a library to fork dependent
 child processes that maintain stdout/stderr/stdin connected to the
 child, check out L<IPC::Run>, L<IPC::ChildSafe>, L<Proc::Simple>,
 L<Proc::Reliable>, L<Proc::Fork>, etc.  This module assumes that all
@@ -111,8 +111,8 @@ it is assumed that you are dealing with is a fixed set of named
 daemons, each of which is associated with a single process to be
 managed.  Of course any managed processes could fork it's own
 children.  Note that only the process id of the immediate child will
-be managed--any child processes spawned by child process
-(grandchildren) are not tracked.
+be managed--any child processes created by child process
+(grandchildren of the launcher) are not tracked.
 
 Similarly your child process should never do a fork() and exit() or
 otherwise daemonize on it's own.  When the child does this, the

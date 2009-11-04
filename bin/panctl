@@ -112,9 +112,11 @@ if ( $options{supervisor} ) {
 
 # enable/disable daemons
 if ( $options{disable} ) {
+    print "Disabling daemon(s)...\n";
     $monitor->disable();
 }
 elsif ( $options{enable} ) {
+    print "Enabling daemon(s)...\n";
     $monitor->enable();
 }
 
@@ -273,7 +275,7 @@ Calls stop() on the selected daemons, followed by start().
 
 =item -disable
 
-Calls disable() on selected daemons.  The daemon will no longer
+Calls disable() on selected daemons.  Disabled daemons will no longer
 respond to start() until enable() is called.  If a supervisor is
 monitoring the daemon, it will no longer be restarted.
 

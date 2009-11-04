@@ -84,27 +84,35 @@ bit of information on related modules and how this one differs.
 
 While it is possible to exec() and manage external executables in the
 child processes, that is merely an afterthought in this module.  If
-you are looking for a module to manage external executables, you might
-also want to check out L<Server::Control>, L<App::Control>, or
-L<App::Daemon> on CPAN, or ControlFreak on github.  See also
-L<Proc::PID::File>.
+you are looking for a module to start and manage external executables,
+you might also want to check out L<Server::Control>, L<App::Control>,
+L<App::Daemon>, or L<Supervisor> on CPAN, or ControlFreak on github.
+
+If you are looking to investigate and/or kill running processes IDs,
+see L<Unix::PID>, L<Unix::PID::Tiny>, or L<Proc::ProcessTable>.  This
+module only manages processes that have been forked by this module.
+
+If you only want to read and write a PID file, see L<Proc::PID::File>.
 
 On the other hand, if you're looking for a library to spawn dependent
 child processes that maintain stdout/stderr/stdin connected to the
 child, check out L<IPC::Run>, L<IPC::ChildSafe>, L<Proc::Simple>,
-L<Proc::Reliable>, etc.  This module assumes that all child processes
-will close stdin/stdout/stderr and potentially live through multiple
-invocations/restarts of the launcher.
+L<Proc::Reliable>, L<Proc::Fork>, etc.  This module assumes that all
+child processes will close stdin/stdout/stderr and will continue to
+live even after the launching process has exited.  Furthermore the
+launched process will be manageable by launchers that are started
+after the launched process is already running.
 
 This library does not do anything like forking/pre-forking multiple
 processes for a single daemon (e.g. for a high-volume server, see
 L<Net::Server::PreFork>) or limiting the maximum number of running
-daemons (see L<Proc::Queue> or L<Parallel::Queue>).  Instead it is assumed
-that you are dealing with is a fixed set of named daemons, each of
-which is associated with a single process to be managed.  Of course
-any managed processes could fork it's own children.  Note that only
-the process id of the immediate child will be managed--any child
-processes spawned by child process (grandchildren) are not tracked.
+child processes (see L<Proc::Queue> or L<Parallel::Queue>).  Instead
+it is assumed that you are dealing with is a fixed set of named
+daemons, each of which is associated with a single process to be
+managed.  Of course any managed processes could fork it's own
+children.  Note that only the process id of the immediate child will
+be managed--any child processes spawned by child process
+(grandchildren) are not tracked.
 
 Similarly your child process should never do a fork() and exit() or
 otherwise daemonize on it's own.  When the child does this, the
@@ -141,9 +149,6 @@ etc.) and also for managing connections to the remote agents.
 
 If you are aware of any other noteworthy modules in this vein, please
 let me know!
-
-UPDATE: Another module that just showed up on CPAN today is
-L<Supervisor::Session>.  This looks worthy of further investigation.
 
 =cut
 
@@ -614,6 +619,46 @@ no Mouse;
 1;
 
 __END__
+
+=back
+
+=head1 SUPPORT
+
+You can find documentation for this module with the perldoc command.
+
+    perldoc Proc::Launcher
+
+You can also look for information at:
+
+=over 4
+
+=item * Source code at github
+
+L<http://github.com/wu/Proc-Launcher>
+
+=item * AnnoCPAN: Annotated CPAN documentation
+
+L<http://annocpan.org/dist/Proc-Launcher>
+
+=item * RT: CPAN's request tracker
+
+L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Proc-Launcher>
+
+=item * Search CPAN
+
+L<http://search.cpan.org/dist/Proc-Launcher>
+
+=item * CPAN Test Matrix
+
+L<http://matrix.cpantesters.org/?dist=Proc-Launcher>
+
+=item * CPANTS overview
+
+L<http://cpants.perl.org/dist/overview/Proc-Launcher>
+
+=item * CPAN Ratings
+
+L<http://cpanratings.perl.org/d/Proc-Launcher>
 
 =back
 

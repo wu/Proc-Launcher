@@ -26,7 +26,7 @@ ok( $launcher->start(),
     "Starting the test process"
 );
 
-sleep 1;
+sleep 2;
 
 ok( ! $launcher->is_running(),
     "Checking that process already exited"

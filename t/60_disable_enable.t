@@ -4,7 +4,7 @@ use strict;
 use Proc::Launcher;
 
 use File::Temp qw/ :POSIX /;
-use Test::More tests => 8;
+use Test::More tests => 12;
 
 my ($fh, $file) = tmpnam();
 close $fh;
@@ -37,6 +37,14 @@ ok( ! $launcher->start(),
     "Trying to start a disabled process should not work"
 );
 
+ok( $launcher->disable(),
+    "Disabling launcher that is already disabled"
+);
+
+ok( ! $launcher->is_enabled(),
+    "Checking that disabled launcher is still disabled"
+);
+
 sleep 2;
 
 ok( ! $launcher->is_running(),
@@ -49,6 +57,14 @@ ok( $launcher->enable(),
 
 ok( $launcher->is_enabled(),
     "Checking that launcher is now enabled"
+);
+
+ok( $launcher->enable(),
+    "Enabling launcher while already enabled"
+);
+
+ok( $launcher->is_enabled(),
+    "Checking that launcher is still enabled"
 );
 
 # shut down the test launcher in case this test case is broken and the

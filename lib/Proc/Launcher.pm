@@ -265,8 +265,8 @@ sub start {
     }
 
     if ( $self->is_running ) {
-        print "Already running, no start needed\n" if $self->debug;
-        return 1;
+        $self->_debug( "Already running, no start needed" );
+        return;
     }
 
     my $log = $self->log_file;
@@ -322,30 +322,42 @@ sub stop {
     my ( $self ) = @_;
 
     if ( ! $self->is_running() ) {
-        print "Process not found running\n" if $self->debug;
+        $self->_debug( "Process not found running" );
         return 1;
     }
 
     my $pid = $self->pid;
 
-    print "Killing process: $pid\n" if $self->debug;
+    $self->_debug( "Killing process: $pid" );
     my $status = kill 1, $pid;
 
     return $status;
 }
 
-=item restart( $data )
+=item restart( $data, $sleep )
 
 Calls the stop() method, followed by the start() method, optionally
-passing some $data to the start() method.  This is pretty weak since
-it doesn't check the status of stop().
+passing some $data to the start() method.
+
+This method is not recommended since it doesn't check the status of
+stop().  Instead, call stop(), wait a bit, and then check that the
+process has shut down before trying to start it again.
+
+WARNING: this method calls sleep to allow a process to shut down
+before trying to start it again.  If sleep is set to 0, the child
+process won't have time to exit, and thus the start() method will
+never run.  As a result, this method is not recommended for use in a
+single-threaded cooperative multitasking environments such as POE.
 
 =cut
 
 sub restart {
-    my ( $self, $data ) = @_;
+    my ( $self, $data, $sleep ) = @_;
 
     $self->stop();
+
+    $sleep = $sleep ? $sleep : 1;
+    sleep $sleep;
 
     $self->start( $data );
 }
@@ -375,14 +387,14 @@ sub is_running {
     # are running.
     $self->rm_zombies();
 
-    print "CHECKING PID: ", $self->pid, "\n" if $self->debug;
+    $self->_debug( "CHECKING PID: " . $self->pid );
 
     if ( kill 0, $self->pid ) {
-        print "STILL RUNNING\n" if $self->debug;
+        $self->_debug( "STILL RUNNING" );
         return $self->daemon_name;
     }
 
-    print "PROCESS NOT RUNNING\n" if $self->debug;
+    $self->_debug( "PROCESS NOT RUNNING" );
 
     # process is not running, ensure the pidfile has been cleaned up
     $self->stopped();
@@ -429,11 +441,11 @@ sub force_stop {
     my ( $self ) = @_;
 
     if ( ! $self->is_running() ) {
-        print "Process not found running\n" if $self->debug;
+        $self->_debug( "Process not found running" );
         return 1;
     }
 
-    print "Process still running, executing with kill -9\n" if $self->debug;
+    $self->_debug( "Process still running, executing with kill -9" );
     my $status = kill 9, $self->pid;
 
     return $status;
@@ -451,7 +463,7 @@ be removed if it still exists.
 sub stopped {
     my ( $self ) = @_;
 
-    print "Process exited\n" if $self->debug;
+    $self->_debug( "Process exited" );
 
     # zero out the pid
     $self->pid( 0 );
@@ -479,7 +491,7 @@ sub read_pid {
         return 0;
     }
 
-    print "READING PID FROM: $path\n" if $self->debug;
+    $self->_debug( "READING PID FROM: $path" );
 
     open(my $fh, "<", $path)
         or die "Couldn't open $path for reading: $!\n";
@@ -512,7 +524,7 @@ sub write_pid {
 
     my $path = $self->pid_file;
 
-    print "WRITING PID TO: $path\n" if $self->debug;
+    $self->_debug( "WRITING PID TO: $path" );
 
     open(my $pid_fh, ">", $path)
         or die "Couldn't open $path for writing: $!\n";
@@ -535,7 +547,7 @@ sub remove_pidfile {
 
     return unless -r $self->pid_file;
 
-    print "REMOVING PIDFILE: ", $self->pid_file, "\n" if $self->debug;
+    $self->_debug( "REMOVING PIDFILE: " . $self->pid_file );
     unlink $self->pid_file;
 }
 
@@ -613,6 +625,17 @@ sub is_enabled {
     return 1;
 }
 
+# debugging output
+sub _debug {
+    my $self = shift;
+
+    return unless $self->debug;
+
+    for my $line ( @_ ) {
+        chomp $line;
+        print "$line\n";
+    }
+}
 
 no Mouse;
 

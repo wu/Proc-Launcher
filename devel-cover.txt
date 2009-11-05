@@ -13,8 +13,10 @@ t/15_launcher_cleanexit.t ...... ok
 t/15_launcher_errorexit.t ...... ok
 t/20_launcher_stubborn.t ....... ok
 t/25_launcher_exec.t ........... ok
+t/30_restart.t ................. ok
 t/50_launch_manager.t .......... ok
 t/60_disable_enable.t .......... ok
+t/70_pidfile.t ................. ok
 t/critic.t ..................... skipped: Author tests not required for installation
 t/kwalitee.t ................... skipped: Author tests not required for installation
 t/meta.t ....................... skipped: Author tests not required for installation
@@ -22,7 +24,7 @@ t/no_tabs.t .................... skipped: Author tests not required for installa
 t/release-pod-coverage.t ....... skipped: these tests are for release candidate testing
 t/release-pod-syntax.t ......... skipped: these tests are for release candidate testing
 All tests successful.
-Files=15, Tests=47, 30 wallclock secs ( 0.07 usr  0.06 sys + 13.56 cusr  0.86 csys = 14.55 CPU)
+Files=17, Tests=70, 45 wallclock secs ( 0.08 usr  0.07 sys + 15.88 cusr  1.11 csys = 17.14 CPU)
 Result: PASS
 Reading database from /Users/wu/projects/Proc-Launcher/Proc-Launcher-0.0.19/cover_db
 
@@ -30,11 +32,11 @@ Reading database from /Users/wu/projects/Proc-Launcher/Proc-Launcher-0.0.19/cove
 ---------------------------- ------ ------ ------ ------ ------ ------ ------
 File                           stmt   bran   cond    sub    pod   time  total
 ---------------------------- ------ ------ ------ ------ ------ ------ ------
-blib/lib/Proc/Launcher.pm      79.3   47.1    n/a   95.2  100.0   16.4   72.1
-.../Proc/Launcher/Manager.pm   58.8   28.6    0.0   75.0  100.0   83.6   60.3
+blib/lib/Proc/Launcher.pm      90.6   76.0    n/a  100.0  100.0   68.9   88.8
+.../Proc/Launcher/Manager.pm   58.8   28.6    0.0   75.0  100.0   31.1   60.3
 ...ncher/Roles/Launchable.pm  100.0    n/a    n/a  100.0    n/a    0.0  100.0
 ...oc/Launcher/Supervisor.pm   75.0    n/a    n/a   80.0  100.0    0.0   77.3
-Total                          71.7   44.0    0.0   86.0  100.0  100.0   69.2
+Total                          77.5   65.6    0.0   88.2  100.0  100.0   77.9
 ---------------------------- ------ ------ ------ ------ ------ ------ ------
 
 

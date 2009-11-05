@@ -3,8 +3,8 @@ Perl files found:                4
 
 Counts
 ------
-total code lines:        428
-lines of non-sub code:   143
+total code lines:        433
+lines of non-sub code:   144
 packages found:          4
 subs/methods:            28
 
@@ -12,8 +12,8 @@ Subroutine/Method Size
 ----------------------
 min:                  3 lines
 max:                  35 lines
-mean:                 10.18 lines
-std. deviation:       7.18
+mean:                 10.32 lines
+std. deviation:       7.33
 median:               8.00
 
 McCabe Complexity
@@ -35,10 +35,10 @@ median:               2.00
 Tab-delimited list of subroutines, with most complex at top
 -----------------------------------------------------------
 complexity	sub	path	size
-11	tail	lib/Proc/Launcher/Manager.pm	31
+11	tail	lib/Proc/Launcher/Manager.pm	32
 10	start	lib/Proc/Launcher.pm	35
 7	read_pid	lib/Proc/Launcher.pm	20
-4	start	lib/Proc/Launcher/Manager.pm	12
+4	start	lib/Proc/Launcher/Manager.pm	15
 3	stop	lib/Proc/Launcher.pm	11
 3	is_running	lib/Proc/Launcher.pm	13
 3	force_stop	lib/Proc/Launcher.pm	10
@@ -60,7 +60,7 @@ complexity	sub	path	size
 2	disable	lib/Proc/Launcher/Manager.pm	8
 2	enable	lib/Proc/Launcher/Manager.pm	8
 2	monitor	lib/Proc/Launcher/Supervisor.pm	7
-2	{code not in named subroutines}	lib/Proc/Launcher/Manager.pm	42
+2	{code not in named subroutines}	lib/Proc/Launcher/Manager.pm	43
 1	rm_zombies	lib/Proc/Launcher.pm	3
 1	stopped	lib/Proc/Launcher.pm	6
 1	daemon	lib/Proc/Launcher/Manager.pm	4

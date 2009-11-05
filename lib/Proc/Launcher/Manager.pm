@@ -7,6 +7,7 @@ our $VERSION;
 
 use Carp;
 use File::Path;
+use POSIX qw(:sys_wait_h);
 
 use Proc::Launcher;
 use Proc::Launcher::Supervisor;
@@ -261,6 +262,8 @@ already running it will not be restarted.
 sub start {
     my ( $self, $data ) = @_;
 
+    my $started;
+
     for my $daemon ( $self->daemons() ) {
         if ( $daemon->is_running() ) {
             print "daemon already running: ", $daemon->daemon_name, "\n";
@@ -268,8 +271,11 @@ sub start {
         else {
             print "starting daemon: ", $daemon->daemon_name, "\n";
             $daemon->start();
+            $started++;
         }
     }
+
+    return $started;
 }
 
 
@@ -402,6 +408,8 @@ sub tail {
             }
         }
         else {
+            # if we spawned any child procs, reap any that died
+            waitpid(-1, WNOHANG);
             sleep 1;
         }
 

@@ -4,7 +4,7 @@ use strict;
 use Proc::Launcher::Manager;
 
 use File::Temp qw/ :POSIX /;
-use Test::More tests => 10;
+use Test::More tests => 16;
 use File::Temp qw(tempdir);
 
 my $tempdir = tempdir('/tmp/proc_launcher_XXXXXX', CLEANUP => 1);
@@ -19,10 +19,6 @@ for my $daemon_name ( @test_daemons ) {
     ok( $manager->register( daemon_name => $daemon_name, start_method => sub { sleep 600 } ),
         "registering test daemon: $daemon_name"
     );
-
-    ok( $manager->daemon($daemon_name)->start(),
-        "starting test daemon: $daemon_name"
-    );
 }
 
 is_deeply( [ $manager->daemons_names() ],
@@ -30,20 +26,78 @@ is_deeply( [ $manager->daemons_names() ],
            "checking all_daemons()"
        );
 
-sleep 1;
 
-is_deeply( [ $manager->is_running ],
-           [ @test_daemons             ],
-           "checking all three daemons are now running"
-       );
+# startup and shutdown
+{
+    ok( $manager->start(),
+        "calling start() on manager to start registered daemons"
+    );
 
-ok( $manager->stop(),
-    "Shutting down all daemons"
-);
+    sleep 1;
 
-sleep 1;
+    is_deeply( [ $manager->is_running ],
+               [ @test_daemons             ],
+               "checking all three daemons are now running"
+           );
 
-is_deeply( [ $manager->is_running ],
-           [ ],
-           "checking all three daemons were successfully shut down"
-       );
+    ok( $manager->stop(),
+        "Shutting down all daemons"
+    );
+
+    sleep 1;
+
+    is_deeply( [ $manager->is_running ],
+               [ ],
+               "checking all three daemons were successfully shut down"
+           );
+}
+
+
+# enable/disable
+{
+    ok( $manager->disable(),
+        "calling disable() on manager to disable registered daemons"
+    );
+
+    ok( $manager->start(),
+        "calling start() on manager to start registered daemons"
+    );
+
+    sleep 1;
+
+    is_deeply( [ $manager->is_running ],
+               [ ],
+               "checking all three daemons were successfully shut down"
+           );
+
+    ok( $manager->enable(),
+        "calling enable() on manager to enable registered daemons"
+    );
+
+}
+
+# force_stop
+{
+    ok( $manager->start(),
+        "calling start() on manager to start registered daemons"
+    );
+
+    sleep 1;
+
+    is_deeply( [ $manager->is_running ],
+               [ @test_daemons             ],
+               "checking all three daemons are now running"
+           );
+
+    ok( $manager->force_stop(),
+        "Shutting down all daemons"
+    );
+
+    sleep 1;
+
+    is_deeply( [ $manager->is_running ],
+               [ ],
+               "checking all three daemons were successfully shut down"
+           );
+}
+

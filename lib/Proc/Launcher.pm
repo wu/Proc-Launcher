@@ -214,9 +214,11 @@ has 'file_tail'    => ( is => 'ro',
                         default => sub {
                             my $self = shift;
                             unless ( -r $self->log_file ) { system( 'touch', $self->log_file ) }
-                            return File::Tail->new( name     => $self->log_file,
-                                                    nowait   => 1,
-                                                    interval => 1,
+                            return File::Tail->new( name        => $self->log_file,
+                                                    nowait      => 1,
+                                                    interval    => 1,
+                                                    maxinterval => 1,
+                                                    resetafter  => 600,
                                                 );
                         },
                     );
@@ -288,22 +290,48 @@ sub start {
 
         open STDOUT, '>>', $self->log_file or die "Can't write stdout to $log: $!";
         open STDERR, '>>', $self->log_file or die "Can't write stderr to $log: $!";
-        #setsid                             or die "Can't start a new session: $!";
+        setsid                             or die "Can't start a new session: $!";
         #umask 0;
 
-        print ">" x 77, "\n";
+        # this doesn't work on most platforms
+        $0 = $self->daemon_name;
+
+        print "\n\n", ">" x 77, "\n";
         print "Starting process: pid = $$: ", scalar localtime, "\n\n";
 
         # child
         if ( $self->class ) {
-            my $method = $self->start_method;
 
             my $class = $self->class;
+            print "Loading Class: $class\n";
             eval "require $class"; ## no critic
 
-            $self->class->new( context => $self->context )->$method( $args );
+            my $error = $@;
+            if ( $error ) {
+                die "ERROR LOADING $class: $error\n";
+            }
+            else {
+                print "Successfully loaded class\n";
+            }
+
+            print "Creating an instance of $class\n";
+            my $obj;
+            eval {                          # try
+                $obj = $class->new( context => $self->context );
+                1;
+            } or do {                       # catch
+                warn "ERROR: unable to create an instance: $@\n";
+                exit;
+            };
+            print "Created\n";
+
+            my $method = $self->start_method;
+            print "Calling method on instance: $method\n";
+
+            $obj->$method( $args );
         }
         else {
+            print "STARTING\n";
             $self->start_method->( $args );
         }
         exit;

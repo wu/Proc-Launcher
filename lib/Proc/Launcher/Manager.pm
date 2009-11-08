@@ -230,6 +230,11 @@ sub is_running {
 
     my @daemon_names = $self->daemons_names();
 
+    unless ( scalar @daemon_names ) {
+        print "is_running() called when no daemons registered";
+        return;
+    }
+
     # clean up deceased child processes before checking if processes
     # are running.
     $self->daemon($daemon_names[0])->rm_zombies();

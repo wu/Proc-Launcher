@@ -231,7 +231,7 @@ sub is_running {
     my @daemon_names = $self->daemons_names();
 
     unless ( scalar @daemon_names ) {
-        print "is_running() called when no daemons registered";
+        print "is_running() called when no daemons registered\n";
         return;
     }
 
@@ -423,6 +423,8 @@ sub tail {
             last if time > $end;
         }
     }
+
+    return 1;
 }
 
 

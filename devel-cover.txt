@@ -6,27 +6,29 @@ cp lib/Proc/Launcher/Supervisor.pm blib/lib/Proc/Launcher/Supervisor.pm
 cp bin/panctl blib/script/panctl
 /usr/local/bin/perl -MExtUtils::MY -e 'MY->fixin(shift)' -- blib/script/panctl
 PERL_DL_NONLAZY=1 /usr/local/bin/perl "-MExtUtils::Command::MM" "-e" "test_harness(0, 'blib/lib', 'blib/arch')" t/*.t
-t/00.load.t .................... ok
-t/10_launcher_sleeper.t ........ ok
-t/10_launcher_sleeper_class.t .. ok
-t/15_launcher_cleanexit.t ...... ok
-t/15_launcher_errorexit.t ...... ok
-t/20_launcher_stubborn.t ....... ok
-t/25_launcher_exec.t ........... ok
-t/30_restart.t ................. ok
-t/40_launcher_class.t .......... ok
-t/40_launcher_class_context.t .. ok
-t/50_launch_manager.t .......... ok
-t/60_disable_enable.t .......... ok
-t/70_pidfile.t ................. ok
-t/critic.t ..................... skipped: Author tests not required for installation
-t/kwalitee.t ................... skipped: Author tests not required for installation
-t/meta.t ....................... skipped: Author tests not required for installation
-t/no_tabs.t .................... skipped: Author tests not required for installation
-t/release-pod-coverage.t ....... skipped: these tests are for release candidate testing
-t/release-pod-syntax.t ......... skipped: these tests are for release candidate testing
+t/00.load.t ....................... ok
+t/10_launcher_sleeper.t ........... ok
+t/10_launcher_sleeper_class.t ..... ok
+t/15_launcher_cleanexit.t ......... ok
+t/15_launcher_errorexit.t ......... ok
+t/20_launcher_stubborn.t .......... ok
+t/25_launcher_exec.t .............. ok
+t/30_restart.t .................... ok
+t/40_launcher_class.t ............. ok
+t/40_launcher_class_context.t ..... ok
+t/50_launch_manager.t ............. ok
+t/51_launch_manager_noregister.t .. ok
+t/52_launch_tail.t ................ ok
+t/60_disable_enable.t ............. ok
+t/70_pidfile.t .................... ok
+t/critic.t ........................ skipped: Author tests not required for installation
+t/kwalitee.t ...................... skipped: Author tests not required for installation
+t/meta.t .......................... skipped: Author tests not required for installation
+t/no_tabs.t ....................... skipped: Author tests not required for installation
+t/release-pod-coverage.t .......... skipped: these tests are for release candidate testing
+t/release-pod-syntax.t ............ skipped: these tests are for release candidate testing
 All tests successful.
-Files=19, Tests=84, 52 wallclock secs ( 0.10 usr  0.07 sys + 17.96 cusr  1.09 csys = 19.22 CPU)
+Files=21, Tests=94, 63 wallclock secs ( 0.10 usr  0.08 sys + 20.46 cusr  1.32 csys = 21.96 CPU)
 Result: PASS
 Reading database from /Users/wu/projects/Proc-Launcher/Proc-Launcher-0.0.19/cover_db
 
@@ -34,11 +36,11 @@ Reading database from /Users/wu/projects/Proc-Launcher/Proc-Launcher-0.0.19/cove
 ---------------------------- ------ ------ ------ ------ ------ ------ ------
 File                           stmt   bran   cond    sub    pod   time  total
 ---------------------------- ------ ------ ------ ------ ------ ------ ------
-blib/lib/Proc/Launcher.pm      93.1   75.0    n/a  100.0  100.0   45.1   89.9
-.../Proc/Launcher/Manager.pm   77.7   37.5    0.0   95.2  100.0   54.8   76.2
+blib/lib/Proc/Launcher.pm      93.1   75.0    n/a  100.0  100.0   26.4   89.9
+.../Proc/Launcher/Manager.pm   99.1   81.2   33.3  100.0  100.0   73.6   96.4
 ...ncher/Roles/Launchable.pm  100.0    n/a    n/a  100.0    n/a    0.0  100.0
 ...oc/Launcher/Supervisor.pm   75.0    n/a    n/a   80.0  100.0    0.0   77.3
-Total                          86.3   66.7    0.0   96.2  100.0  100.0   84.5
+Total                          94.8   76.4   33.3   98.1  100.0  100.0   92.0
 ---------------------------- ------ ------ ------ ------ ------ ------ ------
 
 

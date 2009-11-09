@@ -1,4 +1,4 @@
-Deleting database /Users/wu/projects/Proc-Launcher/Proc-Launcher-0.0.19/cover_db
+Deleting database /Users/wu/projects/Proc-Launcher/Proc-Launcher-0.0.20/cover_db
 cp lib/Proc/Launcher/Manager.pm blib/lib/Proc/Launcher/Manager.pm
 cp lib/Proc/Launcher/Roles/Launchable.pm blib/lib/Proc/Launcher/Roles/Launchable.pm
 cp lib/Proc/Launcher.pm blib/lib/Proc/Launcher.pm
@@ -28,21 +28,21 @@ t/no_tabs.t ....................... skipped: Author tests not required for insta
 t/release-pod-coverage.t .......... skipped: these tests are for release candidate testing
 t/release-pod-syntax.t ............ skipped: these tests are for release candidate testing
 All tests successful.
-Files=21, Tests=94, 63 wallclock secs ( 0.10 usr  0.08 sys + 20.46 cusr  1.32 csys = 21.96 CPU)
+Files=21, Tests=94, 65 wallclock secs ( 0.10 usr  0.08 sys + 20.52 cusr  1.36 csys = 22.06 CPU)
 Result: PASS
-Reading database from /Users/wu/projects/Proc-Launcher/Proc-Launcher-0.0.19/cover_db
+Reading database from /Users/wu/projects/Proc-Launcher/Proc-Launcher-0.0.20/cover_db
 
 
 ---------------------------- ------ ------ ------ ------ ------ ------ ------
 File                           stmt   bran   cond    sub    pod   time  total
 ---------------------------- ------ ------ ------ ------ ------ ------ ------
-blib/lib/Proc/Launcher.pm      93.1   75.0    n/a  100.0  100.0   26.4   89.9
-.../Proc/Launcher/Manager.pm   99.1   81.2   33.3  100.0  100.0   73.6   96.4
+blib/lib/Proc/Launcher.pm      93.1   75.0    n/a  100.0  100.0   28.2   89.9
+.../Proc/Launcher/Manager.pm   99.1   81.2   33.3  100.0  100.0   71.8   96.4
 ...ncher/Roles/Launchable.pm  100.0    n/a    n/a  100.0    n/a    0.0  100.0
 ...oc/Launcher/Supervisor.pm   75.0    n/a    n/a   80.0  100.0    0.0   77.3
 Total                          94.8   76.4   33.3   98.1  100.0  100.0   92.0
 ---------------------------- ------ ------ ------ ------ ------ ------ ------
 
 
-Writing HTML output to /Users/wu/projects/Proc-Launcher/Proc-Launcher-0.0.19/cover_db/coverage.html ...
+Writing HTML output to /Users/wu/projects/Proc-Launcher/Proc-Launcher-0.0.20/cover_db/coverage.html ...
 done.

@@ -1,5 +1,28 @@
 Revision history for Proc-Launcher
 
+For complete revision history, see: http://github.com/wu/Proc-Launcher
+
+0.0.20 Sun Nov  8, 2009  6:37 pm
+
+    - adding reports for Devel::Cover and Perl::Metrics::Simple
+      - increased test coverage to 92%
+
+    - improvements for launching processes with a named class, method, and context
+      - more test cases
+      - more debugging output
+
+    - several improvements to tail() in panctl, manager, and launcher
+
+    - launched processes now call setsid
+
+    - improvements to manager
+      - start() method returns number of daemons started
+      - testing enable() and disable()
+
+    - launcher restart() method now accepts number of seconds to sleep
+      - updated docs with the details
+
+
 0.0.19 Tue Nov  3, 2009 11:27 pm
 
   - manager's spawn() method renamed register()

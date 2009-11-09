@@ -38,9 +38,6 @@ ok( $launcher->is_running(),
 sleep 2;
 
 ok( ! $launcher->is_running(),
-    "Checking that process exited successfully after 1 second, as set in context"
+    "Checking that process was started successfully"
 );
-
-# in case the process was still running, shut it down now!
-$launcher->force_stop();
 

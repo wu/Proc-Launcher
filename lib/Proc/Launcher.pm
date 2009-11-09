@@ -162,7 +162,7 @@ has 'debug'        => ( is => 'ro', isa => 'Bool', default => 0 );
 
 has 'daemon_name'  => ( is => 'ro', isa => 'Str', required => 1 );
 
-has 'context'      => ( is => 'ro' );
+has 'context'      => ( is => 'ro', default => sub { {} } );
 
 has 'class'        => ( is => 'ro', isa => 'Str' );
 # can be either a coderef, or if a class is specified, can be a string :/

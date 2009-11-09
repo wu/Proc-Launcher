@@ -1,28 +1,18 @@
 #!/perl
 use strict;
 
-package Test::MyApp;
-use Mouse;
-
-sub runme {
-    sleep 600;
-}
-
-no Mouse;
-
-package main;
-
 use Proc::Launcher;
 
 use File::Temp qw/ :POSIX /;
 use Test::More tests => 5;
 
+use lib "t/lib";
+
 my ($fh, $file) = tmpnam();
 close $fh;
 unlink $file;
 
-
-my $launcher = Proc::Launcher->new( class        => 'Test::MyApp',
+my $launcher = Proc::Launcher->new( class        => 'TestApp',
                                     start_method => 'runme',
                                     daemon_name  => 'test',
                                     pid_file     => $file,

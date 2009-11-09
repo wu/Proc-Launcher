@@ -15,6 +15,7 @@ t/20_launcher_stubborn.t ....... ok
 t/25_launcher_exec.t ........... ok
 t/30_restart.t ................. ok
 t/40_launcher_class.t .......... ok
+t/40_launcher_class_context.t .. ok
 t/50_launch_manager.t .......... ok
 t/60_disable_enable.t .......... ok
 t/70_pidfile.t ................. ok
@@ -25,7 +26,7 @@ t/no_tabs.t .................... skipped: Author tests not required for installa
 t/release-pod-coverage.t ....... skipped: these tests are for release candidate testing
 t/release-pod-syntax.t ......... skipped: these tests are for release candidate testing
 All tests successful.
-Files=18, Tests=80, 49 wallclock secs ( 0.09 usr  0.07 sys + 16.91 cusr  1.10 csys = 18.17 CPU)
+Files=19, Tests=84, 52 wallclock secs ( 0.10 usr  0.07 sys + 17.96 cusr  1.09 csys = 19.22 CPU)
 Result: PASS
 Reading database from /Users/wu/projects/Proc-Launcher/Proc-Launcher-0.0.19/cover_db
 
@@ -33,11 +34,11 @@ Reading database from /Users/wu/projects/Proc-Launcher/Proc-Launcher-0.0.19/cove
 ---------------------------- ------ ------ ------ ------ ------ ------ ------
 File                           stmt   bran   cond    sub    pod   time  total
 ---------------------------- ------ ------ ------ ------ ------ ------ ------
-blib/lib/Proc/Launcher.pm      94.5   78.0    n/a  100.0  100.0   45.2   91.6
-.../Proc/Launcher/Manager.pm   78.9   35.7    0.0   95.2  100.0   54.8   77.4
+blib/lib/Proc/Launcher.pm      93.1   75.0    n/a  100.0  100.0   45.1   89.9
+.../Proc/Launcher/Manager.pm   77.7   37.5    0.0   95.2  100.0   54.8   76.2
 ...ncher/Roles/Launchable.pm  100.0    n/a    n/a  100.0    n/a    0.0  100.0
 ...oc/Launcher/Supervisor.pm   75.0    n/a    n/a   80.0  100.0    0.0   77.3
-Total                          87.2   68.8    0.0   96.2  100.0  100.0   85.6
+Total                          86.3   66.7    0.0   96.2  100.0  100.0   84.5
 ---------------------------- ------ ------ ------ ------ ------ ------ ------
 
 

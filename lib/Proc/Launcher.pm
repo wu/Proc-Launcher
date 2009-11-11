@@ -266,7 +266,7 @@ sub start {
         return;
     }
 
-    if ( $self->is_running ) {
+    if ( $self->is_running() ) {
         $self->_debug( "Already running, no start needed" );
         return;
     }
@@ -275,9 +275,15 @@ sub start {
 
     if ( my $pid = fork ) {
         # parent
-        print "LAUNCHED CHILD PROCESS: pid=$pid log=$log\n";
         $self->pid( $pid );
-        $self->write_pid();
+        if ( $self->write_pid() ) {
+            print "LAUNCHED CHILD PROCESS: pid=$pid log=$log\n";
+            return 1;
+        }
+        else {
+            print "CHILD PROCESS ALREADY RUNNING\n";
+            return;
+        }
     }
     else {
         #chdir '/'                          or die "Can't chdir to /: $!";
@@ -336,8 +342,6 @@ sub start {
         }
         exit;
     }
-
-    return 1;
 }
 
 =item stop()
@@ -403,21 +407,22 @@ rm_zombies() method about the leaky abstraction here.
 If the pid is not active, the stopped() method will also be called to
 ensure the pid file has been removed.
 
-
 =cut
 
 sub is_running {
-    my ( $self ) = @_;
+    my ( $self, $pid ) = @_;
 
-    return unless $self->pid;
+    unless ( defined $pid ) { $pid = $self->pid }
+
+    return unless $pid;
 
     # clean up deceased child processes before checking if processes
     # are running.
     $self->rm_zombies();
 
-    $self->_debug( "CHECKING PID: " . $self->pid );
+    $self->_debug( "CHECKING PID: $pid" );
 
-    if ( kill 0, $self->pid ) {
+    if ( kill 0, $pid ) {
         $self->_debug( "STILL RUNNING" );
         return $self->daemon_name;
     }
@@ -537,28 +542,52 @@ sub read_pid {
         return 0;
     }
 
-    $self->pid( $line );
-
+    #$self->pid( $line );
+    return $line;
 }
 
 =item write_pid()
 
 Write the pid to the pid file.
 
+This operation involves checking a couple of times to make sure that
+no other process is running or trying to start another process at the
+same time.  The pid is actually written to a temporary file and then
+renamed.  Since rename() is an atomic operation on most filesystems,
+this serves as a basic but effective locking mechanism that doesn't
+require OS-level locking.  This should prevent two processes from both
+starting a daemon at the same time.
+
 =cut
 
 sub write_pid {
     my ( $self ) = @_;
 
-    my $path = $self->pid_file;
+    # try to read the pidfile and see if the pid therein is active
+    return if $self->is_running( $self->read_pid() );
 
+    # write the pid to a temporary file
+    my $path = join ".", $self->pid_file, $$;
     $self->_debug( "WRITING PID TO: $path" );
-
     open(my $pid_fh, ">", $path)
         or die "Couldn't open $path for writing: $!\n";
     print $pid_fh $self->pid;
     close $pid_fh or die "Error closing file: $!\n";
 
+    # if some other process has created a pidfile since we last
+    # checked, then it won and we lost
+    return if -r $self->pid_file;
+
+    # atomic operation
+    if ( rename $path, $self->pid_file ) {
+        return 1;
+    }
+
+    unless ( $self->read_pid() == $self->pid ) {
+        die "ERROR: wrote our pid to the pidfile, but now there's a different pid there!";
+    }
+
+    return;
 }
 
 =item remove_pidfile

@@ -2,7 +2,7 @@ Revision history for Proc-Launcher
 
 For complete revision history, see: http://github.com/wu/Proc-Launcher
 
-0.0.21 Wed Nov 11, 2009  1:54 am
+0.0.22 Wed Nov 11, 2009  1:54 am
 
     - resolve a bug where multiple Launchers try to start the same daemon at the same time
       - added simple rename-based lock to write_pid() method

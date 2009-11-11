@@ -9,13 +9,22 @@ plan( skip_all => 'Author tests not required for installation' )
 
 use Proc::Launcher;
 
-use File::Temp qw/ :POSIX /;
+use File::Temp qw/ :POSIX tempdir /;
 
+# temporary pid file
 my ($fh, $file) = tmpnam();
 close $fh;
 unlink $file;
 
-my $start_method = sub { sleep 3 };
+# temporary directory to store results
+my $tempdir  = tempdir( CLEANUP => 1 );
+
+my $start_method = sub { my $pid;
+                         # get the child's pid, not the current pid!!!
+                         eval '$pid = $$';
+                         system( 'touch', "$tempdir/started.$pid" );
+                         sleep 3;
+                     };
 
 my $launcher = Proc::Launcher->new( start_method => $start_method,
                                     daemon_name  => 'test',
@@ -46,6 +55,7 @@ for my $test ( 1 .. 3 ) {
 my $ok_exit_statuses;
 
 for my $pid ( @pids ) {
+    print "WAITING ON PID: $pid\n";
     waitpid( $pid, 0 );
 
     unless ( $? ) {
@@ -54,8 +64,30 @@ for my $pid ( @pids ) {
 }
 
 is( $ok_exit_statuses,
+    3,
+    "Checking that all three launchers exited successfully"
+);
+
+# waiting for launched daemons to die
+sleep 4;
+
+my $files_created = 0;
+
+my $dir_h;
+opendir( $dir_h, $tempdir ) or die "Can't opendir $tempdir: $!";
+while ( defined( my $entry = readdir( $dir_h ) ) ) {
+    next unless $entry;
+
+    if ( $entry =~ m|started| ) {
+        print "FOUND: $entry\n";
+        $files_created++
+    };
+}
+closedir( $dir_h );
+
+is( $files_created,
     1,
-    "Checking that only one forked process successfully started the daemon"
+    "Checking that only one child process ran to create a tempfile"
 );
 
 # shut down the daemon if we left it running

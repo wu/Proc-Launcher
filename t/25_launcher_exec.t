@@ -36,8 +36,10 @@ ok( $launcher->is_running(),
     "Checking that process was started successfully"
 );
 
+sleep 1;
+
 ok( $launcher->read_pid(),
-    "Checking that pid file is empty"
+    "Checking that pid file is not empty"
 );
 
 ok( ! $launcher->start(),

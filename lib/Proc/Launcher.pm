@@ -584,15 +584,11 @@ sub write_pid {
     return if -r $self->pid_file;
 
     # atomic operation
-    if ( rename $path, $self->pid_file ) {
-        return 1;
+    unless ( rename $path, $self->pid_file ) {
+        return;
     }
 
-    unless ( $self->read_pid() == $self->pid ) {
-        die "ERROR: wrote our pid to the pidfile, but now there's a different pid there!";
-    }
-
-    return;
+    return 1;
 }
 
 =item remove_pidfile

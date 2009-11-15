@@ -71,7 +71,7 @@ stdout/stderr/stdin of the children are not directly connected to the
 launching process.  All stdout and stderr from the child processes is
 written to a log file.
 
-For more useful functions (e.g. a supervisor to restart the process that
+For more useful functions (e.g. a supervisor to restart processes that
 die), see L<Proc::Launcher::Manager>.
 
 =head1 RELATED WORK
@@ -129,7 +129,7 @@ be modified to be daemonized.
 
 This library does not use or require an event loop (e.g. AnyEvent,
 POE, etc.), but is fully usable from with an event loop since objects
-of this class never call sleep() (doing so inside a single-threaded
+of this class avoid calling sleep() (doing so inside a single-threaded
 event loop causes everything else running in the event loop to wait).
 This does mean that methods such as stop() will return immediately
 without providing a status.  See more about this in the note below in
@@ -254,7 +254,9 @@ pick up the new data, you must stop the child process and then start a
 new process with a copy of the new data.
 
 If the process is found already running, then the method will
-immediately return success.
+immediately return null.  If a process was successfully forked,
+success will be returned.  Success does not imply that the daemon was
+started successfully--for that, check is_running().
 
 =cut
 
@@ -301,11 +303,13 @@ sub start {
 
         open STDOUT, '>>', $self->log_file or die "Can't write stdout to $log: $!";
         open STDERR, '>>', $self->log_file or die "Can't write stderr to $log: $!";
+
         setsid                             or die "Can't start a new session: $!";
+
         #umask 0;
 
         # this doesn't work on most platforms
-        $0 = $self->daemon_name;
+        $0 = join " - ", "perl", "Proc::Launcher", $self->daemon_name;
 
         print "\n\n", ">" x 77, "\n";
         print "Starting process: pid = $$: ", scalar localtime, "\n\n";
@@ -742,15 +746,6 @@ L<http://cpants.perl.org/dist/overview/Proc-Launcher>
 L<http://cpanratings.perl.org/d/Proc-Launcher>
 
 =back
-
-=head1 LIMITATIONS
-
-Currently no locking is being performed so multiple controlling
-processes running at the same time could potentially conflict.  For
-example, both controlling processes might be trying to start the
-daemon at the same time.  A fix for this is planned.
-
-
 
 =head1 LICENCE AND COPYRIGHT
 

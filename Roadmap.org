@@ -3,24 +3,8 @@
   - for each selected daemons
     - is daemon running
     - is daemon enabled
-
-
-
-* send data to child processes
-
-  - still under consideration
-
-  - option to create a named pipe for each child process
-    - daemon_name.cmd
-
-  - create named pipe 
-    - open as STDIN in child process
-    - child process can use this or simply ignore
-
-  - manager method to send text to each daemon's named pipe
-    - YAML/json filter?
-
-
+    - pid
+    - process stats, e.g. cpu time & memory ?
 
 * receive data from child processes
 
@@ -40,4 +24,28 @@
   - not reliable since there's no 'ack' for messages transmitted
     - could be lost
     - might get delivered to wrong manager process
+
+
+* add method: signal( $num )
+
+  - does: kill -$num $launcher->pid
+    - if $launcher->pid
+
+  - stop() and force_stop() use this
+
+  - hash signal names to numbers?  methods?
+    - $launcher->signal( 'HUP' )
+    - $launcher->HUP
+
+* make the supervisor less special
+
+  - supervisor is just another ordinary daemon
+
+  - shortcut to create the supervisor
+
+  - ensure supervisor is started last
+
+  - actions to operate only on supervisor
+
+  - supervisor waits a bit before calling start() the first time
 

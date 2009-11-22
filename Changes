@@ -2,6 +2,20 @@ Revision history for Proc-Launcher
 
 For complete revision history, see: http://github.com/wu/Proc-Launcher
 
+0.0.24 Sun Nov 22, 2009 12:07 am
+
+    - create optional named pipe attached to STDIN of forked process
+      - must be enabled, default is to not create the named pipe
+
+    - forked process calls stopped() on exit to remove pidfile/named pipe
+      - cleaned up some of the leaky abstraction issues with is_running()
+
+    - check if pid owned by another user
+      - catches some cases where a pid that has been recycled
+
+    - update $0 in forked processes to include 'perl - Proc::Launcher'
+      - makes forked processes easy to identify
+      
 0.0.23 Wed Nov 11, 2009  1:54 am
 
     - resolve a bug where multiple Launchers try to start the same daemon at the same time

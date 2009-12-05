@@ -33,7 +33,7 @@ is_deeply( [ $manager->daemons_names() ],
         "calling start() on manager to start registered daemons"
     );
 
-    sleep 1;
+    sleep 2;
 
     is_deeply( [ $manager->is_running ],
                [ @test_daemons             ],
@@ -44,7 +44,7 @@ is_deeply( [ $manager->daemons_names() ],
         "Shutting down all daemons"
     );
 
-    sleep 1;
+    sleep 2;
 
     is_deeply( [ $manager->is_running ],
                [ ],
@@ -63,7 +63,7 @@ is_deeply( [ $manager->daemons_names() ],
         "calling start() on manager to start registered daemons"
     );
 
-    sleep 1;
+    sleep 2;
 
     is_deeply( [ $manager->is_running ],
                [ ],
@@ -82,7 +82,7 @@ is_deeply( [ $manager->daemons_names() ],
         "calling start() on manager to start registered daemons"
     );
 
-    sleep 1;
+    sleep 2;
 
     is_deeply( [ $manager->is_running ],
                [ @test_daemons             ],
@@ -93,7 +93,7 @@ is_deeply( [ $manager->daemons_names() ],
         "Shutting down all daemons"
     );
 
-    sleep 1;
+    sleep 2;
 
     is_deeply( [ $manager->is_running ],
                [ ],

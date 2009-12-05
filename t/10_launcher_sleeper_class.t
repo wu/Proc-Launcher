@@ -26,7 +26,7 @@ ok( $launcher->start(),
     "Starting the test process"
 );
 
-sleep 1;
+sleep 2;
 
 ok( $launcher->is_running(),
     "Checking that process was started successfully"
@@ -36,7 +36,7 @@ ok( $launcher->stop(),
     "Calling 'stop' method"
 );
 
-sleep 1;
+sleep 2;
 
 ok( ! $launcher->is_running(),
     "Checking that 'stop' successfully shut down the process"

@@ -2,6 +2,13 @@ Revision history for Proc-Launcher
 
 For complete revision history, see: http://github.com/wu/Proc-Launcher
 
+0.0.26 Sat Dec  5, 2009  5:02 am
+
+    - adjusting sleep times in test cases
+      - consistently sleep a few seconds after start() and stop() before is_running()
+      - pid is no longer being cached, need to wait for child process has forked and written pidfile
+      - generally happens very quickly but might take a few seconds on slower machines
+
 0.0.25 Sat Dec  5, 2009  3:59 am
 
     - API CHANGES:

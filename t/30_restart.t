@@ -41,7 +41,7 @@ ok( $initial_pid,
     ok( $launcher->restart(),
         "Restarting the running process"
     );
-    sleep 1;
+    sleep 2;
 
     my $new_pid = $launcher->pid;
     ok( $new_pid,
@@ -63,7 +63,7 @@ ok( $initial_pid,
     ok( $launcher->restart( { test => 1 }, 2 ),
         "Restarting the running process passing in test data and setting sleep to 2"
     );
-    sleep 1;
+    sleep 2;
 
     my $new_pid = $launcher->pid;
     ok( $new_pid,

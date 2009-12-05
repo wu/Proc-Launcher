@@ -32,7 +32,7 @@ ok( $manager->start(),
     "Calling start on daemon test1"
 );
 
-sleep 1;
+sleep 2;
 
 ok( $manager->stop(),
     "Calling stop on daemon test1"

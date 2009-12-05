@@ -32,11 +32,11 @@ ok( $launcher->start(),
     "Starting the test process"
 );
 
+sleep 2;
+
 ok( $launcher->is_running(),
     "Checking that process was started successfully"
 );
-
-sleep 1;
 
 ok( $launcher->pid(),
     "Checking that pid file is not empty"
@@ -50,7 +50,7 @@ ok( $launcher->force_stop(),
     "Calling 'force_stop' method"
 );
 
-sleep 1;
+sleep 2;
 
 ok( ! $launcher->is_running(),
     "Checking that process exec'd process was shut down"

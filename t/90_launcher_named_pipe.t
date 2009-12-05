@@ -24,6 +24,8 @@ ok( $launcher->start(),
     "Starting the test process"
 );
 
+sleep 2;
+
 ok( $launcher->is_running(),
     "Checking that process was started successfully"
 );

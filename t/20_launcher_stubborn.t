@@ -32,6 +32,8 @@ ok( $launcher->start(),
     "Starting the test process"
 );
 
+sleep 2;
+
 ok( $launcher->is_running(),
     "Checking that process was started successfully"
 );
@@ -40,7 +42,7 @@ ok( $launcher->stop(),
     "Calling 'stop' method"
 );
 
-sleep 1;
+sleep 2;
 
 ok( $launcher->is_running(),
     "Checking that process is stubborn and did not exit with normal kill signal (this is expected)"

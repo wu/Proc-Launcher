@@ -35,7 +35,7 @@ ok( $launcher->is_running(),
     "Checking that process was started successfully"
 );
 
-sleep 3;
+sleep 2;
 
 ok( ! $launcher->is_running(),
     "Checking that process exited successfully after 1 second, as set in context"

@@ -29,6 +29,8 @@ ok( $launcher->start(),
     "Trying to start a disabled process should not work"
 );
 
+sleep 2;
+
 ok( $launcher->is_running(),
     "Checking that disabled process was not started"
 );

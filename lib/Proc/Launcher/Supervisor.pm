@@ -18,6 +18,8 @@ has 'manager'       => ( is       => 'rw',
 sub monitor {
     my ( $self ) = @_;
 
+    sleep 5;
+
     while ( 1 ) {
         $self->manager->start();
         sleep $self->monitor_delay;

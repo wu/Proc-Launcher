@@ -3,17 +3,17 @@ Perl files found:                4
 
 Counts
 ------
-total code lines:        514
-lines of non-sub code:   159
+total code lines:        515
+lines of non-sub code:   151
 packages found:          4
 subs/methods:            29
 
 Subroutine/Method Size
 ----------------------
 min:                  3 lines
-max:                  72 lines
-mean:                 12.24 lines
-std. deviation:       12.82
+max:                  82 lines
+mean:                 12.55 lines
+std. deviation:       14.47
 median:               8.00
 
 McCabe Complexity
@@ -27,19 +27,19 @@ median:               1.50
 
 Subroutines/Methods:
 min:                  1
-max:                  19
-mean:                 3.62
-std. deviation:       3.58
+max:                  21
+mean:                 3.69
+std. deviation:       3.88
 median:               2.00
 
 Tab-delimited list of subroutines, with most complex at top
 -----------------------------------------------------------
 complexity	sub	path	size
-19	start	lib/Proc/Launcher.pm	72
+21	start	lib/Proc/Launcher.pm	82
 11	tail	lib/Proc/Launcher/Manager.pm	33
-7	read_pid	lib/Proc/Launcher.pm	20
+7	pid	lib/Proc/Launcher.pm	20
 6	is_running	lib/Proc/Launcher.pm	19
-6	write_pid	lib/Proc/Launcher.pm	15
+6	write_my_pid	lib/Proc/Launcher.pm	15
 4	write_pipe	lib/Proc/Launcher.pm	8
 4	is_running	lib/Proc/Launcher/Manager.pm	18
 4	start	lib/Proc/Launcher/Manager.pm	15
@@ -48,9 +48,9 @@ complexity	sub	path	size
 3	_debug	lib/Proc/Launcher.pm	8
 3	register	lib/Proc/Launcher/Manager.pm	12
 3	read_log	lib/Proc/Launcher/Manager.pm	7
-3	{code not in named subroutines}	lib/Proc/Launcher.pm	88
+3	{code not in named subroutines}	lib/Proc/Launcher.pm	80
 2	restart	lib/Proc/Launcher.pm	7
-2	stopped	lib/Proc/Launcher.pm	7
+2	stopped	lib/Proc/Launcher.pm	6
 2	remove_pidfile	lib/Proc/Launcher.pm	6
 2	read_log	lib/Proc/Launcher.pm	9
 2	disable	lib/Proc/Launcher.pm	7

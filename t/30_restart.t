@@ -25,13 +25,13 @@ ok( $launcher->restart(),
     "Restarting a process that isn't currently running"
 );
 
-sleep 1;
+sleep 2;
 
 ok( $launcher->is_running(),
     "Checking that process was started"
 );
 
-my $initial_pid = $launcher->pid;
+my $initial_pid = $launcher->pid();
 ok( $initial_pid,
     "Checking that a PID was found for the process"
 );

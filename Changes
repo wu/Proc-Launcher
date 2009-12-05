@@ -2,6 +2,16 @@ Revision history for Proc-Launcher
 
 For complete revision history, see: http://github.com/wu/Proc-Launcher
 
+0.0.25 Sat Dec  5, 2009  3:59 am
+
+    - API CHANGES:
+      - read_pid() is now pid()
+      - pid attribute removed, now call $obj->pid() instead of $obj->pid
+      - no longer caches pid in Proc::Launcher
+      - resolves a bug where supervisor thinks a process was shut down and starts a second one
+
+    - adjust some sleep times in the test cases to pass more reliably in my vm
+
 0.0.24 Sun Nov 22, 2009 12:07 am
 
     - create optional named pipe attached to STDIN of forked process

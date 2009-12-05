@@ -24,7 +24,7 @@ ok( ! $launcher->is_running(),
     "Checking that test process is not already running"
 );
 
-ok( ! $launcher->read_pid(),
+ok( ! $launcher->pid(),
     "Checking that pid file is empty"
 );
 
@@ -38,7 +38,7 @@ ok( $launcher->is_running(),
 
 sleep 1;
 
-ok( $launcher->read_pid(),
+ok( $launcher->pid(),
     "Checking that pid file is not empty"
 );
 

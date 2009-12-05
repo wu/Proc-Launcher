@@ -64,8 +64,8 @@ for my $pid ( @pids ) {
 }
 
 is( $ok_exit_statuses,
-    3,
-    "Checking that all three launchers exited successfully"
+    1,
+    "Checking that only one launcher exited successfully"
 );
 
 # waiting for launched daemons to die

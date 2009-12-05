@@ -48,7 +48,7 @@ Proc::Launcher - yet another forking process controller
     $launcher->restart();
 
     # get the process pid
-    my $pid = $launcher->pid;
+    my $pid = $launcher->pid();
 
     # kill -HUP
     $launcher->stop();
@@ -303,15 +303,6 @@ has 'file_tail'    => ( is => 'ro',
                         },
                     );
 
-# private, don't set this
-has 'pid'          => ( is => 'rw',
-                        isa => 'Int',
-                        lazy => 1,
-                        default => sub {
-                            my $self = shift;
-                            return $self->read_pid();
-                        },
-                    );
 
 =item pipe => 0
 
@@ -390,18 +381,13 @@ sub start {
 
     if ( my $pid = fork ) {    # PARENT
 
-        # set the pid of the launched process
-        $self->pid( $pid );
-
         print "LAUNCHED CHILD PROCESS: pid=$pid log=$log\n";
-        return 1;
+        return $pid;
 
     }
     else {                     # CHILD
 
-        # set the pid in the child process
-        $self->pid( $$ );
-        unless ( $self->write_pid() ) {
+        unless ( $self->write_my_pid() ) {
             print "CHILD PROCESS ALREADY RUNNING\n";
             exit 1;
         }
@@ -442,11 +428,13 @@ sub start {
 
             my $class = $self->class;
             print "Loading Class: $class\n";
+
             eval "require $class"; ## no critic
 
             my $error = $@;
             if ( $error ) {
-                die "ERROR LOADING $class: $error\n";
+                $self->stopped();
+                die "FATAL ERROR LOADING $class: $error\n";
             }
             else {
                 print "Successfully loaded class\n";
@@ -458,19 +446,33 @@ sub start {
                 $obj = $class->new( context => $self->context );
                 1;
             } or do {                       # catch
-                warn "ERROR: unable to create an instance: $@\n";
-                exit;
+                $self->stopped();
+                die "FATAL: unable to create an instance: $@\n";
             };
             print "Created\n";
 
             my $method = $self->start_method;
             print "Calling method on instance: $method\n";
 
-            $obj->$method( $args );
+            eval {                          # try
+                $obj->$method( $args );
+                1;
+            } or do {                       # catch
+                $self->stopped();
+                die "FATAL: $@\n";
+            };
+
         }
         else {
             print "STARTING\n";
-            $self->start_method->( $args );
+            eval {                          # try
+                $self->start_method->( $args );
+                1;
+            } or do {                       # catch
+                # error
+                print "ERROR: $@\n";
+            };
+
         }
 
         # cleanup
@@ -495,7 +497,7 @@ sub stop {
         return 1;
     }
 
-    my $pid = $self->pid;
+    my $pid = $self->pid();
 
     $self->_debug( "Killing process: $pid" );
     my $status = kill 1 => $pid;
@@ -549,7 +551,7 @@ ensure the pid file has been removed.
 sub is_running {
     my ( $self, $pid ) = @_;
 
-    unless ( defined $pid ) { $pid = $self->pid }
+    unless ( $pid ) { $pid = $self->pid() }
 
     return unless $pid;
 
@@ -587,20 +589,18 @@ Calls waitpid to clean up any child processes that have exited.
 waitpid is called with the WNOHANG option so that it will always
 return instantly to prevent hanging.
 
-NOTE: Normally this is called when the is_running() method is called
-(to allow child processes to exit before polling if they are still
-active).  This is where the abstraction gets a bit leaky.  After
-stopping a daemon, if you always call is_running() until you get a
-false response (i.e. the process has successfully stopped), then
-everything will work cleanly and you can be sure any zombies have been
-reaped.  If you don't call is_running() until successful shutdown has
-been detected, then you may create zombies.
+Normally this is called when the is_running() method is called (to
+allow child processes to exit before polling if they are still
+active).  If you are using a Proc::Launcher in a long-lived process,
+after stopping a daemon you should always call is_running() until you
+get a false response (i.e. the process has successfully stopped).  If
+you do not call is_running() until the process exits, you will create
+zombies.
 
 =cut
 
 sub rm_zombies {
     waitpid(-1, WNOHANG);
-
 }
 
 =item force_stop()
@@ -618,7 +618,7 @@ sub force_stop {
     }
 
     $self->_debug( "Process still running, executing with kill -9" );
-    my $status = kill 9 => $self->pid;
+    my $status = kill 9 => $self->pid();
 
     return $status;
 }
@@ -627,8 +627,7 @@ sub force_stop {
 =item stopped()
 
 This method is called when a process has been detected as successfully
-shut down.  The pid attribute will be zeroed out and the pidfile will
-be removed if it still exists.
+shut down.  The pidfile will be removed if it still exists.
 
 =cut
 
@@ -637,9 +636,6 @@ sub stopped {
 
     $self->_debug( "Process exited" );
 
-    # zero out the pid
-    $self->pid( 0 );
-
     # remove the pidfile
     $self->remove_pidfile();
 
@@ -647,7 +643,7 @@ sub stopped {
     if ( $self->pipe ) { unlink $self->pipe_file }
 }
 
-=item read_pid()
+=item pid()
 
 Read and return the pid from the pidfile.
 
@@ -656,7 +652,7 @@ found, 0 is returned.
 
 =cut
 
-sub read_pid {
+sub pid {
     my ( $self ) = @_;
 
     my $path = $self->pid_file;
@@ -683,11 +679,10 @@ sub read_pid {
         return 0;
     }
 
-    #$self->pid( $line );
     return $line;
 }
 
-=item write_pid()
+=item write_my_pid()
 
 Write the pid to the pid file.
 
@@ -701,18 +696,18 @@ starting a daemon at the same time.
 
 =cut
 
-sub write_pid {
+sub write_my_pid {
     my ( $self ) = @_;
 
     # try to read the pidfile and see if the pid therein is active
-    return if $self->is_running( $self->read_pid() );
+    return if $self->is_running();
 
     # write the pid to a temporary file
     my $path = join ".", $self->pid_file, $$;
     $self->_debug( "WRITING PID TO: $path" );
     open(my $pid_fh, ">", $path)
         or die "Couldn't open $path for writing: $!\n";
-    print $pid_fh $self->pid;
+    print $pid_fh $$;
     close $pid_fh or die "Error closing file: $!\n";
 
     # if some other process has created a pidfile since we last

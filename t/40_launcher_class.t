@@ -14,7 +14,7 @@ my ($fh, $file) = tmpnam();
 close $fh;
 unlink $file;
 
-my $context = { sleep => 1 };
+my $context = { sleep => 5 };
 
 my $launcher = Proc::Launcher->new( class        => 'TestApp',
                                     start_method => 'runme',
@@ -31,11 +31,13 @@ ok( $launcher->start(),
     "Starting the test process"
 );
 
+sleep 2;
+
 ok( $launcher->is_running(),
     "Checking that process was started successfully"
 );
 
-sleep 2;
+sleep 8;
 
 ok( ! $launcher->is_running(),
     "Checking that process exited successfully after 1 second, as set in context"

@@ -3,26 +3,22 @@ use strict;
 
 use Proc::Launcher;
 
-use File::Temp qw/ :POSIX /;
 use Test::More tests => 7;
 
-# ignore kill signal (this is what makes us stubborn)
+# ignore kill signal (this is what makes this test stubborn)
 $SIG{HUP}  = 'IGNORE';
 
-
-
-my ($fh, $file) = tmpnam();
-close $fh;
-unlink $file;
+use File::Temp qw(tempdir);
+my $tempdir = tempdir('/tmp/proc_launcher_XXXXXX', CLEANUP => 1);
 
 my $start_method = sub {
     sleep 600;
 };
 
 my $launcher = Proc::Launcher->new( start_method => $start_method,
-                                        daemon_name  => 'test',
-                                        pid_file     => $file,
-                                    );
+                                    daemon_name  => 'test',
+                                    pid_dir      => $tempdir,
+                                );
 
 ok( ! $launcher->is_running(),
     "Checking that test process is not already running"

@@ -4,20 +4,20 @@ use strict;
 use Proc::Launcher;
 
 use IO::File;
-use Test::More tests => 7;
+use Test::More tests => 6;
+
+use File::Temp qw(tempdir);
+my $tempdir = tempdir('/tmp/proc_launcher_XXXXXX', CLEANUP => 1);
 
 my $launcher = Proc::Launcher->new( start_method => sub { $| = 1; print "FOO\n"; print <STDIN>; print "BAR\n" },
                                     daemon_name  => 'test-exec',
+                                    pid_dir      => $tempdir,
                                     pipe         => 1,
                                     quiet        => 1,
                                 );
 
 ok( ! $launcher->is_running(),
     "Checking that test process is not already running"
-);
-
-ok( unlink $launcher->log_file,
-    "Removing previous log file"
 );
 
 ok( $launcher->start(),

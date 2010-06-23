@@ -9,15 +9,8 @@ plan( skip_all => 'Author tests not required for installation' )
 
 use Proc::Launcher;
 
-use File::Temp qw/ :POSIX tempdir /;
-
-# temporary pid file
-my ($fh, $file) = tmpnam();
-close $fh;
-unlink $file;
-
-# temporary directory to store results
-my $tempdir  = tempdir( CLEANUP => 1 );
+use File::Temp qw(tempdir);
+my $tempdir = tempdir('/tmp/proc_launcher_XXXXXX', CLEANUP => 1);
 
 my $start_method = sub { my $pid;
                          # get the child's pid, not the current pid!!!
@@ -28,7 +21,7 @@ my $start_method = sub { my $pid;
 
 my $launcher = Proc::Launcher->new( start_method => $start_method,
                                     daemon_name  => 'test',
-                                    pid_file     => $file,
+                                    pid_dir      => $tempdir,
                                 );
 
 

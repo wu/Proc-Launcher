@@ -3,21 +3,17 @@ use strict;
 
 use Proc::Launcher;
 
-use File::Temp qw/ :POSIX /;
 use Test::More tests => 8;
+
+use File::Temp qw(tempdir);
+my $tempdir = tempdir('/tmp/proc_launcher_XXXXXX', CLEANUP => 1);
 
 # ignore kill signal (this is what makes us stubborn)
 $SIG{HUP}  = 'IGNORE';
 
-
-
-my ($fh, $file) = tmpnam();
-close $fh;
-unlink $file;
-
 my $launcher = Proc::Launcher->new( start_method => sub { exec 'sleep 60' },
                                     daemon_name  => 'test-exec',
-                                    pid_file     => $file,
+                                    pid_dir      => $tempdir,
                                 );
 
 ok( ! $launcher->is_running(),

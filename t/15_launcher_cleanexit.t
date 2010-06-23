@@ -3,18 +3,16 @@ use strict;
 
 use Proc::Launcher;
 
-use File::Temp qw/ :POSIX /;
 use Test::More tests => 3;
 
-my ($fh, $file) = tmpnam();
-close $fh;
-unlink $file;
+use File::Temp qw(tempdir);
+my $tempdir = tempdir('/tmp/proc_launcher_XXXXXX', CLEANUP => 1);
 
 my $start_method = sub { exit };
 
 my $launcher = Proc::Launcher->new( start_method => $start_method,
                                     daemon_name  => 'test',
-                                    pid_file     => $file,
+                                    pid_dir      => $tempdir,
                                 );
 
 ok( ! $launcher->is_running(),

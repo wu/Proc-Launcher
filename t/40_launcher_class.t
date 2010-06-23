@@ -5,21 +5,19 @@ package main;
 
 use Proc::Launcher;
 
-use File::Temp qw/ :POSIX /;
 use Test::More tests => 4;
 
-use lib "t/lib";
+use File::Temp qw(tempdir);
+my $tempdir = tempdir('/tmp/proc_launcher_XXXXXX', CLEANUP => 1);
 
-my ($fh, $file) = tmpnam();
-close $fh;
-unlink $file;
+use lib "t/lib";
 
 my $context = { sleep => 5 };
 
 my $launcher = Proc::Launcher->new( class        => 'TestApp',
                                     start_method => 'runme',
                                     daemon_name  => 'test',
-                                    pid_file     => $file,
+                                    pid_dir      => $tempdir,
                                     context      => $context,
                                 );
 

@@ -1,3 +1,21 @@
+* cache pid of child process
+
+  - resolves a bug showing up intermittently in the test cases
+    - happens immediately after daemon started
+    - check_running returns false if run before daemon has written pidfile
+
+  - solution
+    - cache pid file in parent on fork()
+    - if pid cached, check cached pid first
+    - if cached pid is good and pidfile matches cached pid, empty cache
+    - if cached pid is bad, empty cache
+
+
+* check out Proc::PID::File::Fcntl
+
+  - use for writing pid files
+
+
 * manager method to get child status hash
 
   - for each selected daemons

@@ -115,7 +115,6 @@ has 'launchers'  => ( is         => 'rw',
 
 
 has 'supervisor' => ( is         => 'rw',
-                      isa        => 'Proc::Launcher::Supervisor',
                       lazy       => 1,
                       default    => sub {
                           my $self = shift;

@@ -382,15 +382,16 @@ sub start {
     if ( my $pid = fork ) {    # PARENT
 
         print "LAUNCHED CHILD PROCESS: pid=$pid log=$log\n";
+
+        unless ( $self->write_my_pid( $pid ) ) {
+            print "CHILD PROCESS ALREADY RUNNING\n";
+            exit 1;
+        }
+
         return $pid;
 
     }
     else {                     # CHILD
-
-        unless ( $self->write_my_pid() ) {
-            print "CHILD PROCESS ALREADY RUNNING\n";
-            exit 1;
-        }
 
         #chdir '/'                          or die "Can't chdir to /: $!";
 
@@ -697,17 +698,19 @@ starting a daemon at the same time.
 =cut
 
 sub write_my_pid {
-    my ( $self ) = @_;
+    my ( $self, $pid ) = @_;
+
+    unless ( $pid ) { $pid = $$ }
 
     # try to read the pidfile and see if the pid therein is active
     return if $self->is_running();
 
     # write the pid to a temporary file
-    my $path = join ".", $self->pid_file, $$;
+    my $path = join ".", $self->pid_file, $pid;
     $self->_debug( "WRITING PID TO: $path" );
     open(my $pid_fh, ">", $path)
         or die "Couldn't open $path for writing: $!\n";
-    print $pid_fh $$;
+    print $pid_fh $pid;
     close $pid_fh or die "Error closing file: $!\n";
 
     # if some other process has created a pidfile since we last

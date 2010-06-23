@@ -2,6 +2,17 @@ Revision history for Proc-Launcher
 
 For complete revision history, see: http://github.com/wu/Proc-Launcher
 
+0.0.28 Tue Jun 22, 2010 11:10 pm
+
+    - fix for bug where is_running() called immediately after start() returned false
+      - write child pidfile in parent process on fork()
+        - child process might not be forked instantly if system is busy
+      - prevents needing to cache the pid
+        - gets ugly since multiple processes might be attempting to control the same daemon
+      - warning: two processes calling start() at exactly the same time could still start two daemons
+        - still working on a fix
+
+
 0.0.27 Tue Jun 22, 2010 10:45 pm
 
     - remove required class 'Proc::Launcher::Supervisor' on Proc::Launcher::Manager's supervisor object
@@ -9,7 +20,7 @@ For complete revision history, see: http://github.com/wu/Proc-Launcher
     - tweak sleep times on a few test cases
       - warning: child process may return false if is_running() called immediately following start()
         - child process may not have written pid file yet
-        - considering a fix for this involving caching the pid from fork()
+        - considering another fix for this involving caching the pid from fork()
 
 0.0.26 Sat Dec  5, 2009  5:02 am
 

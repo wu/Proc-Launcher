@@ -12,7 +12,7 @@ my $start_method = sub { sleep 60 };
 
 my $launcher = Proc::Launcher->new( start_method => $start_method,
                                     daemon_name  => 'test',
-                                    pid_file     => $tempdir,
+                                    pid_dir      => $tempdir,
                                 );
 
 ok( ! $launcher->is_running(),

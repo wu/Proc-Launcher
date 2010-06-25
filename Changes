@@ -2,6 +2,11 @@ Revision history for Proc-Launcher
 
 For complete revision history, see: http://github.com/wu/Proc-Launcher
 
+0.0.30 Thu Jun 24, 2010  7:46 pm
+
+    - fixing one more broken test missed in previous release
+      - use a temporary directory for pid/log files
+
 0.0.29 Wed Jun 23, 2010  2:50 pm
 
     - fix some broken test cases

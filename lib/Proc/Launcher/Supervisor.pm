@@ -1,9 +1,10 @@
 package Proc::Launcher::Supervisor;
 use strict;
 use warnings;
-use Mouse;
 
-our $VERSION;
+# VERSION
+
+use Mouse;
 
 has 'monitor_delay' => ( is       => 'rw',
                          isa      => 'Int',

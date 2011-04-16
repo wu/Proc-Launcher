@@ -1,9 +1,10 @@
 package Proc::Launcher::Roles::Launchable;
 use strict;
 use warnings;
-use Mouse::Role;
 
-our $VERSION;
+# VERSION
+
+use Mouse::Role;
 
 requires 'start';
 requires 'stop';

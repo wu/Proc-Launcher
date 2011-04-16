@@ -2,6 +2,12 @@ Revision history for Proc-Launcher
 
 For complete revision history, see: http://github.com/wu/Proc-Launcher
 
+0.0.31 Fri Apr 15, 2011  9:09pm
+
+  - adding some additional debugging for failures on MirBSD and OpenBSD
+
+  - updating dzil.ini, no longer works with current version of Dist-Zilla
+
 0.0.30 Thu Jun 24, 2010  7:46 pm
 
     - fixing one more broken test missed in previous release

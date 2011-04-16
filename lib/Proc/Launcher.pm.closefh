@@ -1,10 +1,9 @@
 package Proc::Launcher;
 use strict;
 use warnings;
-
-# VERSION
-
 use Mouse;
+
+our $VERSION;
 
 #_* Libraries
 
@@ -382,19 +381,25 @@ sub start {
 
     if ( my $pid = fork ) {    # PARENT
 
-        print "LAUNCHED CHILD PROCESS: pid=$pid log=$log\n";
-
-        unless ( $self->write_my_pid( $pid ) ) {
-            print "CHILD PROCESS ALREADY RUNNING\n";
-            exit 1;
-        }
-
+        print "LAUNCHED CHILD PROCESS: pid=$pid log=$log\n" if $self->debug;
         return $pid;
 
     }
     else {                     # CHILD
 
+        unless ( $self->write_my_pid() ) {
+            print "CHILD PROCESS ALREADY RUNNING\n";
+            exit 1;
+        }
+
         #chdir '/'                          or die "Can't chdir to /: $!";
+
+        setsid                             or die "Can't start a new session: $!";
+
+        # close all open filehandles except stdout/stdin/stderr, those
+        # are handled separately
+        my $fd_max = eval { POSIX::sysconf (POSIX::_SC_OPEN_MAX ()) - 1 } || 1023;
+        for ( 3 .. $fd_max ) { POSIX::close( $_ ) }
 
         # wu - ugly bug fix - when closing STDIN, it becomes free and
         # may later get reused when calling open (resulting in error
@@ -404,8 +409,6 @@ sub start {
 
         open STDOUT, '>>', $self->log_file or die "Can't write stdout to $log: $!";
         open STDERR, '>>', $self->log_file or die "Can't write stderr to $log: $!";
-
-        setsid                             or die "Can't start a new session: $!";
 
         #umask 0;
 
@@ -699,19 +702,17 @@ starting a daemon at the same time.
 =cut
 
 sub write_my_pid {
-    my ( $self, $pid ) = @_;
-
-    unless ( $pid ) { $pid = $$ }
+    my ( $self ) = @_;
 
     # try to read the pidfile and see if the pid therein is active
     return if $self->is_running();
 
     # write the pid to a temporary file
-    my $path = join ".", $self->pid_file, $pid;
+    my $path = join ".", $self->pid_file, $$;
     $self->_debug( "WRITING PID TO: $path" );
     open(my $pid_fh, ">", $path)
         or die "Couldn't open $path for writing: $!\n";
-    print $pid_fh $pid;
+    print $pid_fh $$;
     close $pid_fh or die "Error closing file: $!\n";
 
     # if some other process has created a pidfile since we last

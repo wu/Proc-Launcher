@@ -1,9 +1,10 @@
 package Proc::Launcher::Manager;
 use strict;
 use warnings;
-use Mouse;
 
-our $VERSION;
+# VERSION
+
+use Mouse;
 
 use Carp;
 use File::Path;

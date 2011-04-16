@@ -22,6 +22,7 @@ my $start_method = sub { my $pid;
 my $launcher = Proc::Launcher->new( start_method => $start_method,
                                     daemon_name  => 'test',
                                     pid_dir      => $tempdir,
+                                    debug        => 1,
                                 );
 
 
@@ -31,7 +32,7 @@ ok( ! $launcher->is_running(),
 
 my @pids;
 
-for my $test ( 1 .. 3 ) {
+for my $test ( 1 .. 5 ) {
 
     if ( my $pid = fork() ) {
         push @pids, $pid;
@@ -44,6 +45,8 @@ for my $test ( 1 .. 3 ) {
 
     exit 1;
 }
+
+sleep 5;
 
 my $ok_exit_statuses;
 

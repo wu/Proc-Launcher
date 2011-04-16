@@ -3,7 +3,7 @@ use strict;
 
 use Proc::Launcher;
 
-use Test::More tests => 3;
+use Test::More tests => 2;
 
 use File::Temp qw(tempdir);
 my $tempdir = tempdir('/tmp/proc_launcher_XXXXXX', CLEANUP => 1);
@@ -19,9 +19,8 @@ ok( ! $launcher->is_running(),
     "Checking that test process is not already running"
 );
 
-ok( $launcher->start(),
-    "Starting the test process which should immediately exit"
-);
+# Starting the test process which should immediately exit
+$launcher->start();
 
 sleep 2;
 

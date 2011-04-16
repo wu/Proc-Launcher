@@ -41,11 +41,12 @@ sleep 2;
 # write random number to file
 $launcher->write_pipe( $random_number );
 
-# wait a second to make sure the child reads and writes to it's log
-sleep 1;
+# wait a bit to make sure the child reads and writes to it's log
+sleep 2;
 
 # search for the random number in the file
 my $found;
+my @log_contents;
 {
     my $path = $launcher->log_file;
 
@@ -58,6 +59,8 @@ my $found;
             $found++;
             last LINE;
         }
+
+        push @log_contents, $line;
     }
 
     close $read or die "Error closing file: $!\n";
@@ -65,7 +68,7 @@ my $found;
 
 ok( $found,
     "Checking that random number was found in log file"
-);
+) or diag ( "Did not find random number $random_number in log file: ", @log_contents );
 
 ok( ! $launcher->is_running(),
     "Checking that process exec'd process was shut down"

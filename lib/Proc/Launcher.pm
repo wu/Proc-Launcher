@@ -816,8 +816,12 @@ sub write_pipe {
     my ( $self, $string ) = @_;
 
     return unless $self->pipe;
+    $self->_debug( "Writing to pipe" );
 
-    return unless -r $self->pipe_file;
+    unless ( -r $self->pipe_file ) {
+        $self->_debug( "Pipe found but not readable" );
+        return;
+    }
 
     # remove any trailing whitespace
     chomp $string;

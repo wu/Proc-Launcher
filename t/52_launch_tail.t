@@ -47,10 +47,10 @@ ok( $manager->tail( sub { $output = join "\n", $output, @_ }, 1 ),
 like( $output,
       qr/Starting process/,
       "Checking that output contains 'Starting process'"
-  );
+  ) or diag( "Output did not contain 'Starting process': $output" );
 
 like( $output,
       qr/test1/,
       "Checking that our daemon is named in the output"
-  );
+  ) or diag( "Output did not contain 'Starting process': $output" );
 

@@ -2,6 +2,10 @@ Revision history for Proc-Launcher
 
 For complete revision history, see: http://github.com/wu/Proc-Launcher
 
+0.0.32 Mon Apr 18, 2011  5:23pm
+
+  - Adding some debugging to Launcher write_pipe() method
+
 0.0.31 Fri Apr 15, 2011  9:09pm
 
   - adding some additional debugging for failures on MirBSD and OpenBSD

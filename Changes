@@ -2,6 +2,12 @@ Revision history for Proc-Launcher
 
 For complete revision history, see: http://github.com/wu/Proc-Launcher
 
+0.0.35 Wed Apr 20, 2011 10:18 pm
+
+  - enable debugging in test case 90_launcher_named_pipe.t
+    - continuing to get CPAN test case failures on OpenBSD
+    - can't reproduce errors in my VirtualBox OpenBSD virtual machine
+
 0.0.34 Mon Apr 18, 2011  6:00pm
 
   - adding some additional debugging for test case failures in launcher tail()

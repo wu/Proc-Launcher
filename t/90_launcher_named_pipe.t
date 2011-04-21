@@ -13,7 +13,7 @@ my $launcher = Proc::Launcher->new( start_method => sub { $| = 1; print "FOO\n";
                                     daemon_name  => 'test-exec',
                                     pid_dir      => $tempdir,
                                     pipe         => 1,
-                                    quiet        => 1,
+                                    debug        => 1,
                                 );
 
 ok( ! $launcher->is_running(),

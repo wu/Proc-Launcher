@@ -11,6 +11,7 @@ use Mouse;
 use File::Path;
 use File::Tail;
 use POSIX qw(setsid :sys_wait_h);
+use Privileges::Drop;
 
 #_* POD
 
@@ -335,6 +336,20 @@ has 'pipe_file'    => ( is => 'ro',
                         },
                     );
 
+
+
+=item run_as => $user
+
+If defined, this process will be run as the specified user.
+This will probably only work if the parent script is run as
+root (or a superuser). Note, as we're changing the effective
+user of the process, perl will automatically turn on taint
+mode.
+
+=cut 
+
+has 'run_as'        => ( is => 'ro', isa => 'Str', required => 0 );
+
 #_* Methods
 
 =back
@@ -439,6 +454,8 @@ sub start {
 
         # this doesn't work on most platforms
         $0 = join " - ", "perl", "Proc::Launcher", $self->daemon_name;
+        
+        drop_privileges($self->run_as) if $self->run_as;
 
         print "\n\n", ">" x 77, "\n";
         print "Starting process: pid = $$: ", scalar localtime, "\n\n";

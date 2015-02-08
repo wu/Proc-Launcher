@@ -4,7 +4,8 @@ use warnings;
 
 # VERSION
 
-use Mouse;
+use Moo;
+use MooX::Types::MooseLike::Base qw(Bool Str Int InstanceOf);
 
 #_* Libraries
 
@@ -183,7 +184,7 @@ Enable debugging messages to STDOUT.  This attribute is read/write.
 
 =cut
 
-has 'debug'        => ( is => 'rw', isa => 'Bool', default => 0 );
+has 'debug'        => ( is => 'rw', isa => Bool, default => 0 );
 
 =item daemon_name => 'somename'
 
@@ -192,7 +193,7 @@ the log file, pid file, etc.
 
 =cut
 
-has 'daemon_name'  => ( is => 'ro', isa => 'Str', required => 1 );
+has 'daemon_name'  => ( is => 'ro', isa => Str, required => 1 );
 
 =item context => $data
 
@@ -211,7 +212,7 @@ start_method will be called on the object.
 
 =cut
 
-has 'class'        => ( is => 'ro', isa => 'Str' );
+has 'class'        => ( is => 'ro', isa => Str );
 
 =item start_method => 'start_me'
 
@@ -231,7 +232,7 @@ Specify the directory where the pid file should live.
 =cut
 
 has 'pid_dir'      => ( is => 'ro',
-                        isa => 'Str',
+                        isa => Str,
                         lazy => 1,
                         default => sub {
                             my $dir = join "/", $ENV{HOME}, "logs";
@@ -247,7 +248,7 @@ Name of the pid file.
 =cut
 
 has 'pid_file'     => ( is => 'ro',
-                        isa => 'Str',
+                        isa => Str,
                         lazy => 1,
                         default => sub {
                             my ( $self ) = @_;
@@ -264,7 +265,7 @@ not be started when start() is called.
 =cut
 
 has 'disable_file' => ( is => 'ro',
-                        isa => 'Str',
+                        isa => Str,
                         lazy => 1,
                         default => sub {
                             my ( $self ) = @_;
@@ -281,7 +282,7 @@ and stderr redirected to this log file.
 =cut
 
 has 'log_file'     => ( is => 'ro',
-                        isa => 'Str',
+                        isa => Str,
                         lazy => 1,
                         default => sub {
                             my $self = shift;
@@ -291,7 +292,7 @@ has 'log_file'     => ( is => 'ro',
                     );
 
 has 'file_tail'    => ( is => 'ro',
-                        isa => 'File::Tail',
+                        isa => InstanceOf['File::Tail'],
                         lazy => 1,
                         default => sub {
                             my $self = shift;
@@ -316,7 +317,7 @@ then there's no use in enabling this option.
 =cut
 
 has 'pipe'         => ( is => 'ro',
-                        isa => 'Bool',
+                        isa => Bool,
                         default => 0,
                     );
 
@@ -327,7 +328,7 @@ Path to the named pipe.
 =cut
 
 has 'pipe_file'    => ( is => 'ro',
-                        isa => 'Str',
+                        isa => Str,
                         lazy => 1,
                         default => sub {
                             my $self = shift;
@@ -345,7 +346,7 @@ signal 15 (TERM) to stop the progress gracefully.
 =cut
 
 has 'stop_signal'    => ( is => 'rw',
-                        isa => 'Int',
+                        isa => Int,
                         lazy => 1,
                         default => 1
                     );
@@ -360,7 +361,7 @@ mode.
 
 =cut 
 
-has 'run_as'        => ( is => 'ro', isa => 'Str', required => 0 );
+has 'run_as'        => ( is => 'ro', isa => Str, required => 0 );
 
 #_* Methods
 
@@ -921,8 +922,6 @@ sub _debug {
         print "$line\n";
     }
 }
-
-no Mouse;
 
 1;
 

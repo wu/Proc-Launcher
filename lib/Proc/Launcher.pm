@@ -336,7 +336,19 @@ has 'pipe_file'    => ( is => 'ro',
                         },
                     );
 
+=item stop_signal => 1
 
+Signal to be send to stop a process. Default is 1 (HUP). If you
+want to control some other processes, e.g. redis you may have to send
+signal 15 (TERM) to stop the progress gracefully.
+
+=cut
+
+has 'stop_signal'    => ( is => 'rw',
+                        isa => 'Int',
+                        lazy => 1,
+                        default => 1
+                    );
 
 =item run_as => $user
 
@@ -547,7 +559,7 @@ sub stop {
     my $pid = $self->pid();
 
     $self->_debug( "Killing process: $pid" );
-    my $status = kill 1 => $pid;
+    my $status = kill $self->stop_signal => $pid;
 
     return $status;
 }

@@ -4,7 +4,7 @@ use warnings;
 
 # VERSION
 
-use Mouse::Role;
+use Moo::Role;
 
 requires 'start';
 requires 'stop';
@@ -14,7 +14,6 @@ requires 'force_stop';
 requires 'is_running';
 
 
-no Mouse::Role;
 
 1;
 
@@ -27,7 +26,7 @@ Proc::Launcher::Roles::Launchable - defines an interface for launchers
 
 =head1 SYNOPSIS
 
-    use Mouse;
+    use Moo;
     with 'Proc::Launcher::Roles::Launchable';
 
 =head1 DESCRIPTION

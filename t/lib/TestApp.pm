@@ -1,7 +1,8 @@
 package TestApp;
-use Mouse;
+use Moo;
+use MooX::Types::MooseLike::Base qw(HashRef);
 
-has context => ( is => 'ro', isa => 'HashRef', lazy => 1, default => sub { {} } );
+has context => ( is => 'ro', isa => HashRef, lazy => 1, default => sub { {} } );
 
 sub runme {
     my ( $self ) = @_;
@@ -10,7 +11,5 @@ sub runme {
 
     sleep $sleep;
 }
-
-no Mouse;
 
 1;

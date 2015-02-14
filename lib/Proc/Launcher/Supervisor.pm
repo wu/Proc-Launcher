@@ -4,15 +4,16 @@ use warnings;
 
 # VERSION
 
-use Mouse;
+use Moo;
+use MooX::Types::MooseLike::Base qw(Bool Str Int InstanceOf HashRef);
 
 has 'monitor_delay' => ( is       => 'rw',
-                         isa      => 'Int',
+                         isa      => Int,
                          default  => 15,
                      );
 
 has 'manager'       => ( is       => 'rw',
-                         isa      => 'Proc::Launcher::Manager',
+                         isa      => InstanceOf['Proc::Launcher::Manager'],
                          required => 1,
                      );
 
@@ -26,8 +27,6 @@ sub monitor {
         sleep $self->monitor_delay;
     }
 }
-
-no Mouse;
 
 1;
 

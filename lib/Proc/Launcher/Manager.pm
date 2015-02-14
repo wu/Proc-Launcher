@@ -4,7 +4,8 @@ use warnings;
 
 # VERSION
 
-use Mouse;
+use Moo;
+use MooX::Types::MooseLike::Base qw(Bool Str HashRef InstanceOf);
 
 use Carp;
 use File::Path;
@@ -96,12 +97,12 @@ with 'Proc::Launcher::Roles::Launchable';
 #_* Attributes
 
 has 'debug'      => ( is         => 'ro',
-                      isa        => 'Bool',
+                      isa        => Bool,
                       default    => 0,
                   );
 
 has 'pid_dir'    => ( is         => 'ro',
-                      isa        => 'Str',
+                      isa        => Str,
                       lazy       => 1,
                       default    => sub {
                           my $dir = join "/", $ENV{HOME}, "logs";
@@ -111,7 +112,7 @@ has 'pid_dir'    => ( is         => 'ro',
                   );
 
 has 'launchers'  => ( is         => 'rw',
-                      isa        => 'HashRef[Proc::Launcher]',
+                      isa        => HashRef[InstanceOf['Proc::Launcher']],
                   );
 
 
@@ -432,7 +433,5 @@ sub tail {
 =back
 
 =cut
-
-no Mouse;
 
 1;

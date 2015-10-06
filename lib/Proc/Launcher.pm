@@ -827,7 +827,7 @@ sub read_log {
 
     while ( my $line=$self->file_tail->read ) {
         chomp $line;
-        $subref->( "$name: $line" );
+        $subref->( "$name: $line" )  if ref($subref) eq 'CODE';
     }
 
     return 1;
